@@ -32,54 +32,22 @@ Toca "Enviar"
 
 ---
 
-### 3. ✅ Destinatario Recibe
-- Segundo dispositivo (teléfono de tu socio) muestra notificación
-- Saldo se actualiza inmediatamente
-- Muestra monto en moneda local
-- Fee mostrado como "$1.50" no "0.000003 AVAX"
+### 3. ✅ Saldo en Múltiples Monedas
+- App permite seleccionar moneda preferida (MXN, COP, GTQ, PEN, etc.)
+- Convierte saldo USDC a la moneda elegida automáticamente
+- Se actualiza en tiempo real usando Exchange Rate API
 
-> Necesitas **dos teléfonos en el escenario.** El momento en que ambas pantallas se actualizan simultáneamente es tu momento wow.
-
----
-
-### 4. ✅ Dashboard Institucional Bankaool
-Pantalla separada (puede ser laptop) que muestra en tiempo real:
-
-```
-┌─────────────────────────────────────────────┐
-│  BANKAOOL — Panel de Operaciones            │
-├─────────────────────────────────────────────┤
-│  Transacción reciente                       │
-│  Corredor:     México → Colombia            │
-│  Monto:        $50.00 USD                   │
-│  Fee ganado:   $1.00 USD                    │
-│  Liquidación:  3.2 segundos                 │
-│  Estado:       ✅ Completada                │
-├─────────────────────────────────────────────┤
-│  Volumen hoy:  $12,450 USD                  │
-│  Transacciones: 249                         │
-│  Fee generado: $249.00 USD                  │
-└─────────────────────────────────────────────┘
-```
-
-> Esto hace que el proyecto sea institucional. Sin esto es solo una app bonita.
+### 4. ✅ Historial de Transacciones
+- Se ve como un estado de cuenta bancario
+- Muestra nombre del remitente (del número de teléfono)
+- Fecha, monto, fee, estado: Completado ✓
 
 ---
 
 ## Lo Que DEBERÍA Funcionar (Bueno Tener)
 
-### 5. Saldo en Moneda Local
-- App detecta o permite seleccionar país
-- Convierte saldo USDC a MXN / COP / PAB automáticamente
-- Se actualiza en tiempo real
-
-### 6. Historial de Transacciones
-- Se ve como un estado de cuenta bancario
-- Muestra nombre del remitente (del número de teléfono)
-- Fecha, monto, fee, estado: Completado ✓
-
-### 7. Selector de Corredor
-- Usuario elige: Enviando desde 🇲🇽 a 🇨🇴
+### 5. Selector de Corredor Dinámico
+- Usuario elige la moneda de destino en el flujo de envío
 - App muestra tasa de cambio y fee por adelantado
 - Sin sorpresas en la confirmación
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useWallet } from './hooks/useWallet';
 import { BalanceCard } from './components/BalanceCard';
 import { SendFlow } from './components/SendFlow';
@@ -16,7 +16,8 @@ function App() {
     sendUSDC, 
     loading,
     ready,
-    wallet
+    wallet,
+    refreshBalance
   } = useWallet();
   
   const [showSend, setShowSend] = useState(false);
@@ -24,9 +25,11 @@ function App() {
   const [username, setUsername] = useState(() => localStorage.getItem('listo_username') || null);
   const [avatar, setAvatar] = useState(() => localStorage.getItem('listo_avatar') || null);
   const [showSettings, setShowSettings] = useState(false);
+  const [preferredCurrency, setPreferredCurrency] = useState(() => localStorage.getItem('listo_currency') || 'MXN');
   const [registering, setRegistering] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
   const [avatarInput, setAvatarInput] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     async function checkUser() {
@@ -48,6 +51,28 @@ function App() {
     }
     checkUser();
   }, [authenticated, wallet?.account?.address, username]);
+
+  const fetchTransactions = useCallback(() => {
+    if (username) {
+      fetch(`${BACKEND_URL}/api/transactions/${username}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setTransactions(data);
+            // Also refresh balance whenever we get new transactions
+            refreshBalance?.();
+          }
+        })
+        .catch(console.error);
+    }
+  }, [username, refreshBalance]);
+
+  useEffect(() => {
+    fetchTransactions();
+    // Poll for new transactions every 10 seconds
+    const interval = setInterval(fetchTransactions, 10000);
+    return () => clearInterval(interval);
+  }, [fetchTransactions]);
 
   if (!ready) {
     return (
@@ -212,6 +237,26 @@ function App() {
       const hash = await sendUSDC(recipientAddress, amount);
       setTxHash(hash);
       setShowSend(false);
+      
+      // Record transaction in backend
+      try {
+        await fetch(`${BACKEND_URL}/api/transactions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from_username: username,
+            to_username: targetUsername,
+            amount_usd: amount,
+            fee_usd: 1.50,
+            corridor: 'MX→CO', // Default for demo
+            tx_hash: hash
+          })
+        });
+        fetchTransactions();
+      } catch (err) {
+        console.error("Error recording transaction:", err);
+      }
+
       alert(`¡Enviado a @${targetUsername}!`);
     } catch (error) {
       alert('Error en la transacción: ' + error.message);
@@ -260,7 +305,28 @@ function App() {
                 <p className="text-[10px] text-gray-500">Cambiar foto</p>
               </div>
 
-              <div className="pt-2 border-t border-gray-100">
+              <div className="pt-2 border-t border-gray-100 space-y-3">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2 px-2">Moneda preferida</label>
+                  <select 
+                    value={preferredCurrency}
+                    onChange={(e) => {
+                      setPreferredCurrency(e.target.value);
+                      localStorage.setItem('listo_currency', e.target.value);
+                    }}
+                    className="w-full bg-gray-50 border border-gray-100 rounded-lg p-2 text-xs font-bold text-primary focus:outline-none focus:ring-1 focus:ring-accent"
+                  >
+                    <option value="MXN">🇲🇽 MXN - México</option>
+                    <option value="COP">🇨🇴 COP - Colombia</option>
+                    <option value="GTQ">🇬🇹 GTQ - Guatemala</option>
+                    <option value="HNL">🇭🇳 HNL - Honduras</option>
+                    <option value="PEN">🇵🇪 PEN - Perú</option>
+                    <option value="CLP">🇨🇱 CLP - Chile</option>
+                    <option value="ARS">🇦🇷 ARS - Argentina</option>
+                    <option value="USD">🇺🇸 USD - Dólares</option>
+                  </select>
+                </div>
+
                 <button
                   onClick={() => {
                     logout();
@@ -278,7 +344,7 @@ function App() {
       </header>
 
       <main className="max-w-md mx-auto p-4 space-y-6">
-        <BalanceCard balance={parseFloat(usdcBalance)} />
+        <BalanceCard balance={parseFloat(usdcBalance)} preferredCurrency={preferredCurrency} />
 
         <button
           onClick={() => setShowSend(true)}
@@ -293,6 +359,7 @@ function App() {
             onSend={handleSend} 
             onCancel={() => setShowSend(false)} 
             onLookup={handleLookup}
+            currentUsername={username}
           />
         )}
 
@@ -311,8 +378,72 @@ function App() {
         )}
 
         <div className="bg-white rounded-2xl p-6 shadow-md">
-          <h2 className="text-lg font-semibold text-primary mb-3">Historial</h2>
-          <p className="text-gray-500 text-sm">Sin transacciones aún</p>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-primary">Historial</h2>
+            <button 
+              onClick={fetchTransactions}
+              className="text-accent text-xs font-bold uppercase tracking-widest hover:opacity-80 transition"
+            >
+              Actualizar
+            </button>
+          </div>
+          
+          {transactions.length > 0 ? (
+            <div className="space-y-4">
+              {transactions.map(tx => {
+                const isOutgoing = tx.from_username === username;
+                const otherAvatar = isOutgoing ? tx.to_avatar : tx.from_avatar;
+                
+                return (
+                  <a 
+                    key={tx.id} 
+                    href={`https://testnet.snowtrace.io/tx/${tx.tx_hash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex justify-between items-center py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition rounded-xl px-2 -mx-2"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className={`w-12 h-12 rounded-full overflow-hidden border-2 ${isOutgoing ? 'border-red-100' : 'border-green-100'}`}>
+                          {otherAvatar ? (
+                            <img src={otherAvatar} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className={`w-full h-full flex items-center justify-center font-bold text-lg ${isOutgoing ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-500'}`}>
+                              {isOutgoing ? '↗' : '↙'}
+                            </div>
+                          )}
+                        </div>
+                        {otherAvatar && (
+                          <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold ${isOutgoing ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
+                            {isOutgoing ? '↗' : '↙'}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-primary text-sm">
+                          {isOutgoing ? `@${tx.to_username}` : `@${tx.from_username}`}
+                        </p>
+                        <p className="text-[10px] text-gray-400 font-medium">
+                          {new Date(tx.timestamp).toLocaleDateString()} · {new Date(tx.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-black text-lg tracking-tighter ${isOutgoing ? 'text-red-500' : 'text-green-500'}`}>
+                        {isOutgoing ? '-' : '+'}${tx.amount_usd.toFixed(2)}
+                      </p>
+                      <p className="text-[9px] text-gray-300 font-mono font-bold uppercase tracking-tighter">USDC</p>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+              <p className="text-gray-400 text-sm font-medium italic">Sin transacciones aún</p>
+              <p className="text-[10px] text-gray-300 mt-1 uppercase tracking-widest font-bold">Tus pagos aparecerán aquí</p>
+            </div>
+          )}
         </div>
       </main>
 

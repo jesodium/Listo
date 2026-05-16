@@ -1,81 +1,74 @@
-# Listo
+# 🏦 Listo — Cross-Border Payments for LatAm
 
-Avalanche LatAm Hackathon — Cross-border payments infrastructure. Phone number onboarding. Instant settlement. Designed for banks.
+> **"Financial inclusion shouldn't require a seed phrase."**
 
-## Problem
+Listo is a mobile-native payments infrastructure built on **Avalanche** that allows anyone in Latin America to send money across borders instantly. We've removed the complexity of crypto to create an experience that feels like a premium banking app.
 
-50% of adults in Latin America don't have a bank account. 80%+ have smartphones. Cross-border remittances cost 5-10% in fees and take 2-5 days.
+---
 
-## Solution
+## 🌟 Key Features
 
-A mobile-first web app that lets users send money across borders using their phone number. No bank account, no seed phrases, no crypto knowledge needed. Settlement happens on Avalanche Fuji testnet in seconds.
+*   **📧 Email-to-Wallet Onboarding:** No seed phrases, no private keys. Users sign in with their email, and an embedded wallet is created automatically via **Privy**.
+*   **⛽ Gasless Transactions (ERC-4337):** Powered by **Smart Wallets**. Users send USDC without ever needing to hold AVAX. We abstract the gas away for a seamless "Web2" experience.
+*   **🌎 Multi-Currency Reference:** Display balances and transaction previews in local currencies (**MXN, COP, GTQ, PEN, CLP, ARS**) using real-time exchange rates.
+*   **⚡ Instant Settlement:** Cross-border transfers settle on the **Avalanche Fuji Testnet** in less than 3 seconds.
+*   **📱 Banking-Grade UI:** A "crypto-invisible" design focused on institutional trust, sleek animations, and mobile-native interactions.
+*   **📜 Live Transaction History:** A real-time ledger with block explorer links and user avatars for a social, personal feel.
 
-## Tech Stack
+---
 
-- **Frontend:** React + Vite + Tailwind CSS
-- **Wallet:** Privy.io (phone number → embedded wallet)
-- **Blockchain:** Avalanche Fuji Testnet (USDC)
-- **Currency:** exchangerate-api.com (USD → MXN/COP/PAB)
+## 🛠️ Tech Stack
 
-## Quick Start
+*   **Frontend:** React (Vite) + Tailwind CSS
+*   **Auth & Wallet:** [Privy.io](https://privy.io) (Embedded Wallets + Email Auth)
+*   **Blockchain:** Avalanche Fuji Testnet
+*   **Assets:** USDC (Native/Testnet)
+*   **Smart Accounts:** Permissionless.js + Pimlico (ERC-4337)
+*   **Backend:** Node.js + Express + SQLite (Username-to-Address mapping)
+*   **Rates:** ExchangeRate-API
 
-You can now start both the frontend and backend with a single command from the root directory:
+---
 
+## 🚀 Quick Start
+
+### 1. Prerequisites
+- Node.js (v18+)
+- A Privy App ID (from [dashboard.privy.io](https://dashboard.privy.io))
+
+### 2. Environment Setup
+Copy the example env file in `listo-app`:
 ```bash
-npm install
-npm run dev
+cp listo-app/.env.example listo-app/.env
 ```
-
-- **Frontend:** `http://localhost:5173`
-- **Backend:** `http://localhost:3001`
-
-If you need to install dependencies for all subprojects:
-```bash
-npm run install-all
-```
-
-## Setup
-
-1. Create account at [privy.io](https://privy.io)
-2. Get your App ID from dashboard
-3. Copy `.env.example` to `.env` and add your App ID:
-
+Add your Privy App ID:
 ```
 VITE_PRIVY_APP_ID=your-privy-app-id
 ```
 
-## Project Structure
+### 3. Run the Project
+From the root directory, install everything and start both servers:
+```bash
+# Install all dependencies
+npm run install-all
 
-```
-listo-app/src/
-  components/
-    AppProvider.jsx    ← Privy wrapper
-    BalanceCard.jsx    ← Balance display
-    SendFlow.jsx       ← Send money flow
-  hooks/
-    useWallet.js       ← Wallet abstraction
-  utils/
-    avalanche.js       ← Fuji testnet config
-    currency.js        ← Exchange rate helpers
-  App.jsx              ← Main screen
-  main.jsx             ← Entry point
+# Start Frontend (5173) and Backend (3001)
+npm run dev
 ```
 
-## Features
+---
 
-- Phone number login → embedded wallet created automatically
-- Balance displayed in local currency (MXN/COP/PAB)
-- Send money flow: phone → amount → confirm
-- Mobile-first, responsive design
-- Banking-style UI (dark navy + mint green palette)
+## 📂 Project Structure
 
-## Docs
+*   `listo-app/`: The React frontend containing the banking UI and blockchain hooks.
+*   `listo-backend/`: Express server managing the username directory and transaction persistence.
+*   `docs/`: Full project documentation, including the pitch deck script and roadmap.
+*   `agents.md`: Documentation of the multi-agent orchestration used to build this project.
 
-See `docs/` for project planning:
+---
 
-- `proyecto.md` — Project overview and problem space
-- `posicionamiento.md` — B2B2C positioning strategy
-- `mvp.md` — MVP requirements
-- `tech-stack.md` — Technical decisions
-- `pitch.md` — Pitch narrative and slides
-- `plan.md` — Weekend build schedule
+## 🏆 Hackathon Tracks
+*   **Inclusión Financiera Digital:** By removing the barrier of crypto complexity and providing a familiar "banking" interface, we enable the 50% of unbanked LatAm adults to enter the digital economy.
+
+---
+
+**Built with 💙 for the Avalanche LatAm Hackathon.**

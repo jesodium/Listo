@@ -2,6 +2,11 @@ const FALLBACK_RATES = {
   MXN: 17.2,
   COP: 4100,
   PAB: 1,
+  GTQ: 7.8,
+  HNL: 24.6,
+  PEN: 3.7,
+  CLP: 940,
+  ARS: 850,
   USD: 1,
 };
 
@@ -21,8 +26,13 @@ export function convertCurrency(amount, rate) {
 }
 
 export function formatCurrency(amount, currency) {
-  return new Intl.NumberFormat('es-MX', {
+  const formatted = new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency,
+    currencyDisplay: 'symbol',
   }).format(amount);
+  
+  // For currencies that use $, append the code if it's not USD to avoid confusion
+  // or just always append it for institutional clarity as requested.
+  return `${formatted} ${currency}`;
 }

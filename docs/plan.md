@@ -62,8 +62,8 @@
 - [x] UI con perfil de usuario (fotos reales Base64)
 - [x] Menú de Ajustes para cambiar foto y cerrar sesión
 - [x] Verificación de identidad: ver foto del destinatario antes de enviar
-- [ ] Conversión de moneda integrada (exchangerate-api)
-- [ ] Fee visible en la pantalla de confirmación
+- [x] mostar conversiones de monedas
+- [x] Fee visible en la pantalla de confirmación
 
 **Tu socio:**
 - [ ] Slide 5 (por qué Avalanche) y Slide 6 (modelo de negocio)
@@ -76,10 +76,11 @@
 ### 🌅 Día 2 — Mañana (12am - 4am)
 
 **Tú:**
-- [ ] Dashboard institucional de Bankaool (pantalla separada)
-- [ ] Transacción aparece en dashboard en tiempo real
-- [ ] App funcionando en dos teléfonos físicos
-- [ ] Saldo se actualiza instantáneamente
+- [x] Selector de moneda preferida en Ajustes
+- [x] Soporte para +8 monedas LatAm (GTQ, PEN, HNL, etc.)
+- [x] Historial de transacciones real (desde backend)
+- [x] App funcionando en dos teléfonos físicos
+- [x] Saldo se actualiza instantáneamente
 
 **Tu socio:**
 - [ ] Slide 7 (mercado) y Slide 8 (el ask) terminados

@@ -124,7 +124,7 @@ TÚ:
 "María está en México. Tiene $200 dólares en su cuenta.
 Su hija le pide $50."
 
-[Muestras teléfono 1 — saldo de María visible]
+[Muestras teléfono 1 — saldo de María visible en MXN]
 
 "María abre la app..."
 [Tocas 'Enviar']
@@ -135,7 +135,7 @@ Su hija le pide $50."
 "...ingresa $50 dólares..."
 [Escribes el monto]
 
-"...ve el fee: $1.50. No $7. $1.50."
+"...ve que Isabella recibirá el equivalente exacto en Pesos Colombianos, al instante."
 [Pausa. Deja que eso aterrice.]
 
 "Confirma."
@@ -145,11 +145,10 @@ Su hija le pide $50."
 
 TU SOCIO:
 [Levanta el teléfono 2]
-"Isabella acaba de recibir $50."
+"Isabella acaba de recibir el dinero. Sin ir al banco, sin Western Union."
 
 TÚ:
-[Señalas la laptop]
-"Y Bankaool acaba de ganar un dólar que antes no existía."
+"Y Bankaool acaba de ganar un dólar que antes no existía por procesar esta transacción."
 
 [Pausa larga]
 
