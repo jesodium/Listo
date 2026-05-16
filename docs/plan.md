@@ -59,7 +59,9 @@
 ### 🌆 Día 1 — Noche (8pm - 11pm)
 
 **Tú:**
-- [ ] UI empieza a verse como banco (aplicar diseño del socio)
+- [x] UI con perfil de usuario (fotos reales Base64)
+- [x] Menú de Ajustes para cambiar foto y cerrar sesión
+- [x] Verificación de identidad: ver foto del destinatario antes de enviar
 - [ ] Conversión de moneda integrada (exchangerate-api)
 - [ ] Fee visible en la pantalla de confirmación
 
