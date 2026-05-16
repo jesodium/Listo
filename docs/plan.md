@@ -25,7 +25,7 @@
 - [x] Tailwind CSS instalado y funcionando
 - [x] Privy.io instalado — cuenta creada en privy.io
 - [x] Home screen con saldo en $0.00 visible en móvil
-- [x] Wallet de testnet creado desde número de teléfono (email → wallet EVM Fuji)
+- [x] Wallet de testnet creado desde email (email → wallet EVM Fuji)
 
 **Tu socio:**
 - [ ] Investigar: estadísticas de remesas en LatAm (cifras reales)
@@ -33,18 +33,19 @@
 - [ ] Escribir la historia de María e Isabella (2 párrafos)
 - [ ] Slide 1 y Slide 2 terminados
 
-**Check de mediodía:** ¿Privy crea wallet desde teléfono? Si no, resolver antes de continuar.
+**Check de mediodía:** ¿Privy crea wallet desde email? Si no, resolver antes de continuar.
 
 ---
 
 ### ☀️ Día 1 — Tarde (2pm - 7pm)
 
 **Tú:**
-- [ ] Fuji testnet configurado
-- [ ] USDC testnet en wallet de prueba (faucet)
-- [ ] Botón "Enviar" muestra formulario
-- [ ] Transacción de testnet ejecutada (aunque sea fea)
-- [ ] Saldo del destinatario se actualiza
+- [x] Fuji testnet configurado
+- [x] USDC testnet en wallet de prueba (faucet)
+- [x] Backend Express+SQLite para mapeo de @usuario a wallet
+- [x] Botón "Enviar" muestra formulario por @usuario
+- [x] Transacción de testnet ejecutada (aunque sea fea)
+- [x] Saldo del destinatario se actualiza
 
 **Tu socio:**
 - [ ] Diseño de UI en Canva/Figma — cómo debe verse la app
@@ -67,9 +68,10 @@
 - [ ] Tabla de números de Bankaool calculada
 - [ ] Empezar Slide 7 (mercado)
 
+
 ---
 
-### 🌅 Día 2 — Mañana (9am - 1pm)
+### 🌅 Día 2 — Mañana (12am - 4am)
 
 **Tú:**
 - [ ] Dashboard institucional de Bankaool (pantalla separada)
@@ -121,7 +123,7 @@ Estas decisiones ya están tomadas. No las reabras durante el hackathon:
 | Decisión | Respuesta |
 |---|---|
 | ¿Qué nombre usamos? | Decidir ANTES del hackathon |
-| ¿Mainnet o testnet? | **Testnet siempre** |
+| ¿Mainnet o testnet? | **Testnet siempre (Base Sepolia)** |
 | ¿Construimos cash-in? | **No. Lo mencionamos en el pitch** |
 | ¿Construimos KYC? | **No. Bankaool lo maneja** |
 | ¿Agregamos ScoreChain? | **No. Es roadmap** |
@@ -154,3 +156,5 @@ Si cualquiera de estas cosas pasa, para todo y reorienta:
 ## Mantra del Fin de Semana
 
 > **Un demo que funciona con 4 features gana a un demo que falla con 10.**
+.**
+

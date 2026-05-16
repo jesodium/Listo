@@ -12,7 +12,8 @@ export const AVALANCHE_FUJI = {
 };
 
 export const USDC_FUJI = {
-  address: '0x5425893485094601386682214594A4E2955C28E9',
+  // Correct Native USDC on Fuji
+  address: '0x5425890298aed601595a70AB815c96711a31Bc65',
   decimals: 6,
   symbol: 'USDC',
 };

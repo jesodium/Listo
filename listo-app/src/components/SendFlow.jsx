@@ -1,39 +1,45 @@
 import { useState } from 'react';
 
-export function SendFlow({ onSend }) {
+export function SendFlow({ onSend, onCancel }) {
   const [step, setStep] = useState(1);
-  const [phone, setPhone] = useState('');
+  const [targetUsername, setTargetUsername] = useState('');
   const [amount, setAmount] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (step === 1 && phone) {
+    if (step === 1 && targetUsername) {
       setStep(2);
     } else if (step === 2 && amount) {
-      onSend({ phone, amount: parseFloat(amount) });
+      onSend({ targetUsername, amount: parseFloat(amount) });
     }
   };
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-md">
-      <h2 className="text-xl font-semibold text-primary mb-4">Enviar dinero</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-primary">Enviar dinero</h2>
+        <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
 
       {step === 1 && (
         <form onSubmit={handleSubmit}>
           <label className="block text-sm text-gray-600 mb-2">
-            Número de teléfono del destinatario
+            @usuario del destinatario
           </label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+52 55 1234 5678"
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent"
-          />
+          <div className="relative mb-4">
+            <span className="absolute left-4 top-3 text-gray-400 font-medium">@</span>
+            <input
+              type="text"
+              value={targetUsername}
+              onChange={(e) => setTargetUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase())}
+              placeholder="isabella456"
+              className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
           <button
             type="submit"
-            disabled={!phone}
-            className="w-full mt-4 bg-accent text-white py-3 rounded-xl font-semibold disabled:opacity-50"
+            disabled={!targetUsername}
+            className="w-full bg-accent text-white py-3 rounded-xl font-semibold disabled:opacity-50"
           >
             Continuar
           </button>
@@ -42,9 +48,9 @@ export function SendFlow({ onSend }) {
 
       {step === 2 && (
         <form onSubmit={handleSubmit}>
-          <p className="text-sm text-gray-600 mb-2">Enviando a: <span className="font-medium">{phone}</span></p>
+          <p className="text-sm text-gray-600 mb-2">Enviando a: <span className="font-medium text-primary">@{targetUsername}</span></p>
           <label className="block text-sm text-gray-600 mb-2">
-            Monto (USD)
+            Monto (USDC)
           </label>
           <input
             type="number"
