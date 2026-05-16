@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useSmartWallets } from '@privy-io/react-auth/smart-wallets';
 import { ethers } from 'ethers';
 import { USDC_FUJI, AVALANCHE_FUJI } from '../utils/avalanche';
 import { ERC20_ABI } from '../utils/erc20';
@@ -7,7 +8,7 @@ import { ERC20_ABI } from '../utils/erc20';
 export function useWallet() {
   const { login, logout, authenticated, user, ready } = usePrivy();
   const { wallets } = useWallets();
-  const { sendTransaction } = useSendTransaction();
+  const { client } = useSmartWallets();
   const [usdcBalance, setUsdcBalance] = useState('0.00');
   const [loading, setLoading] = useState(false);
 
@@ -15,63 +16,56 @@ export function useWallet() {
     (wallet) => wallet.walletClientType === 'privy'
   );
 
+  // Strictly use Smart Wallet address. Ignore embedded wallet balance to prevent flicker.
+  const displayAddress = client?.account?.address;
+
   const getBalance = useCallback(async () => {
-    if (!embeddedWallet) return;
+    if (!displayAddress) return;
     
     try {
-      // Always use static RPC for reads to avoid chain mismatch race conditions
       const staticProvider = new ethers.JsonRpcProvider(AVALANCHE_FUJI.rpcUrl);
       const contract = new ethers.Contract(USDC_FUJI.address, ERC20_ABI, staticProvider);
       
-      const balance = await contract.balanceOf(embeddedWallet.address);
+      const balance = await contract.balanceOf(displayAddress);
       const decimals = await contract.decimals();
       setUsdcBalance(ethers.formatUnits(balance, decimals));
     } catch (error) {
       console.error('Error fetching balance:', error);
     }
-  }, [embeddedWallet]);
+  }, [displayAddress]);
 
   useEffect(() => {
-    if (authenticated && embeddedWallet) {
+    if (authenticated && displayAddress) {
       getBalance();
     }
-  }, [authenticated, embeddedWallet, getBalance]);
+  }, [authenticated, displayAddress, getBalance]);
 
   const sendUSDC = async (to, amount) => {
-    if (!embeddedWallet) throw new Error('No wallet connected');
+    if (!client) throw new Error('Smart Wallet not ready');
     
     setLoading(true);
     try {
-      await embeddedWallet.switchChain(AVALANCHE_FUJI.chainId);
+      if (embeddedWallet) {
+        await embeddedWallet.switchChain(AVALANCHE_FUJI.chainId);
+      }
       
-      // Calculate amount with decimals
       const staticProvider = new ethers.JsonRpcProvider(AVALANCHE_FUJI.rpcUrl);
       const contract = new ethers.Contract(USDC_FUJI.address, ERC20_ABI, staticProvider);
       const decimals = await contract.decimals();
       const parsedAmount = ethers.parseUnits(amount.toString(), decimals);
 
-      // Encode the ERC20 transfer function call
       const data = contract.interface.encodeFunctionData('transfer', [to, parsedAmount]);
 
-      // Execute without sponsor: true (User pays gas in AVAX)
-      const txRequest = {
+      // Execute via Smart Wallet client -> hits Pimlico Paymaster
+      const txHash = await client.sendTransaction({
+        account: client.account,
         to: USDC_FUJI.address,
         data: data,
-        value: 0,
-        chainId: AVALANCHE_FUJI.chainId,
-      };
+        value: 0n,
+      });
 
-      const uiOptions = {
-        header: 'Enviar USDC',
-        description: 'Bankaool - Confirmar transacción',
-        buttonText: 'Confirmar Envío',
-      };
-
-      const txResponse = await sendTransaction(txRequest, uiOptions);
-      
       await getBalance();
-      // txResponse is an object containing the transaction hash
-      return txResponse.transactionHash;
+      return txHash;
     } catch (error) {
       console.error('Transfer error:', error);
       throw error;
@@ -84,10 +78,10 @@ export function useWallet() {
     login,
     logout,
     authenticated,
-    ready,
+    ready: ready && (authenticated ? !!client : true), // Force wait for client if authenticated
     user,
-    wallet: embeddedWallet,
-    address: embeddedWallet?.address,
+    wallet: client, // Expose smart wallet client
+    address: displayAddress,
     usdcBalance,
     sendUSDC,
     refreshBalance: getBalance,

@@ -1,4 +1,5 @@
 import { PrivyProvider } from '@privy-io/react-auth';
+import { SmartWalletsProvider } from '@privy-io/react-auth/smart-wallets';
 
 export function AppProvider({ children }) {
   return (
@@ -15,7 +16,15 @@ export function AppProvider({ children }) {
         },
       }}
     >
-      {children}
+      <SmartWalletsProvider
+        config={{
+          paymasterContext: {
+            mode: 'SPONSORED',
+          },
+        }}
+      >
+        {children}
+      </SmartWalletsProvider>
     </PrivyProvider>
   );
 }

@@ -15,7 +15,8 @@ function App() {
     usdcBalance, 
     sendUSDC, 
     loading,
-    ready 
+    ready,
+    wallet
   } = useWallet();
   
   const [showSend, setShowSend] = useState(false);
@@ -63,14 +64,17 @@ function App() {
 
   const handleRegisterUsername = async (e) => {
     e.preventDefault();
-    if (!usernameInput || !address) return;
+    // Use the explicit Smart Wallet address for registration
+    const smartWalletAddress = wallet?.account?.address;
+    
+    if (!usernameInput || !smartWalletAddress) return;
     setRegistering(true);
     
     try {
       const res = await fetch(`${BACKEND_URL}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: usernameInput, wallet_address: address })
+        body: JSON.stringify({ username: usernameInput, wallet_address: smartWalletAddress })
       });
       
       const data = await res.json();
@@ -86,7 +90,7 @@ function App() {
   };
 
   // If authenticated but no username set, force them to pick one
-  if (authenticated && address && !username) {
+  if (authenticated && wallet?.account?.address && !username) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-md">

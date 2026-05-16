@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useWallets, usePrivy } from '@privy-io/react-auth';
+import { useSmartWallets } from '@privy-io/react-auth/smart-wallets';
 
 export function DebugPanel() {
   const [open, setOpen] = useState(false);
@@ -8,6 +9,8 @@ export function DebugPanel() {
   let user;
   let authenticated;
   let ready;
+  let smartWalletAddress;
+
   try {
     const w = useWallets();
     wallets = w.wallets;
@@ -18,6 +21,10 @@ export function DebugPanel() {
     user = p.user;
     authenticated = p.authenticated;
     ready = p.ready;
+  } catch {}
+  try {
+    const sw = useSmartWallets();
+    smartWalletAddress = sw.client?.account?.address;
   } catch {}
 
   return (
@@ -36,10 +43,22 @@ export function DebugPanel() {
 
           <div><span className="text-gray-500">ready </span>{String(ready)}</div>
           <div><span className="text-gray-500">auth </span>{String(authenticated)}</div>
-          <div><span className="text-gray-500">wallets </span>{wallets?.length ?? 0}</div>
+          
+          {smartWalletAddress && (
+            <div className="border-t border-gray-700 pt-2 mt-2">
+              <div className="text-yellow-400 font-bold">SMART WALLET:</div>
+              <div className="break-all">{smartWalletAddress}</div>
+              <a href={`https://testnet.snowtrace.io/address/${smartWalletAddress}`} target="_blank" rel="noreferrer" className="text-accent underline">
+                snowtrace ↗
+              </a>
+            </div>
+          )}
+
+          <div><span className="text-gray-500 mt-2 block">wallets </span>{wallets?.length ?? 0}</div>
 
           {wallets?.map((w, i) => (
             <div key={i} className="border-t border-gray-700 pt-2 mt-2">
+              <div className="text-gray-400 font-bold">Embedded Wallet:</div>
               <div className="break-all">addr: {w.address || 'none'}</div>
               <div>type: {w.walletClientType || 'n/a'}</div>
               <div>chain: {w.chainId || 'n/a'}</div>
