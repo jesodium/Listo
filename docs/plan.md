@@ -21,11 +21,11 @@
 ### 🌅 Día 1 — Mañana (9am - 1pm)
 
 **Tú:**
-- [ ] `npx create-react-app` — proyecto creado
-- [ ] Tailwind CSS instalado y funcionando
-- [ ] Privy.io instalado — cuenta creada en privy.io
-- [ ] Home screen con saldo en $0.00 visible en móvil
-- [ ] Wallet de testnet creado desde número de teléfono
+- [x] `npx create-react-app` — proyecto creado (usamos Vite)
+- [x] Tailwind CSS instalado y funcionando
+- [x] Privy.io instalado — cuenta creada en privy.io
+- [x] Home screen con saldo en $0.00 visible en móvil
+- [x] Wallet de testnet creado desde número de teléfono (email → wallet EVM Fuji)
 
 **Tu socio:**
 - [ ] Investigar: estadísticas de remesas en LatAm (cifras reales)
