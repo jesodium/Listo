@@ -1,0 +1,12 @@
+{
+  "name": "listo-monorepo",
+  "version": "1.0.0",
+  "description": "Listo - Cross-border instant payments",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix listo-backend\" \"npm run dev --prefix listo-app\"",
+    "install-all": "npm install && npm install --prefix listo-app && npm install --prefix listo-backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

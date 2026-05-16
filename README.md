@@ -19,13 +19,20 @@ A mobile-first web app that lets users send money across borders using their pho
 
 ## Quick Start
 
+You can now start both the frontend and backend with a single command from the root directory:
+
 ```bash
-cd listo-app
 npm install
 npm run dev
 ```
 
-App runs at `http://localhost:5173`.
+- **Frontend:** `http://localhost:5173`
+- **Backend:** `http://localhost:3001`
+
+If you need to install dependencies for all subprojects:
+```bash
+npm run install-all
+```
 
 ## Setup
 

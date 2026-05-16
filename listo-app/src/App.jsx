@@ -28,6 +28,27 @@ function App() {
   const [usernameInput, setUsernameInput] = useState('');
   const [avatarInput, setAvatarInput] = useState(null);
 
+  useEffect(() => {
+    async function checkUser() {
+      const addr = wallet?.account?.address;
+      if (authenticated && addr && !username) {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/user/${addr}`);
+          if (res.ok) {
+            const data = await res.json();
+            setUsername(data.username);
+            setAvatar(data.avatar);
+            localStorage.setItem('listo_username', data.username);
+            if (data.avatar) localStorage.setItem('listo_avatar', data.avatar);
+          }
+        } catch (err) {
+          console.error("Error checking user:", err);
+        }
+      }
+    }
+    checkUser();
+  }, [authenticated, wallet?.account?.address, username]);
+
   if (!ready) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
