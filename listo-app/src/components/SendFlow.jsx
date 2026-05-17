@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Html5Qrcode } from 'html5-qrcode';
+import { getExchangeRates, convertCurrency, formatCurrency } from '../utils/currency';
 
 const spring = { type: 'spring', damping: 36, stiffness: 360, mass: 0.7 };
 
-export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient, currentBalance }) {
+export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient, currentBalance, preferredCurrency = 'MXN' }) {
   const [step, setStep] = useState(initialRecipient ? 2 : 1);
   const [targetUsername, setTargetUsername] = useState(initialRecipient?.username || '');
   const [amount, setAmount] = useState('');
@@ -13,6 +14,18 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
   const [error, setError] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
   const scannerRef = useRef(null);
+  const [rates, setRates] = useState(null);
+
+  useEffect(() => {
+    getExchangeRates().then(setRates);
+  }, []);
+
+  const convertAmount = () => {
+    if (!amount || !rates) return null;
+    const rate = rates[preferredCurrency];
+    if (!rate) return null;
+    return formatCurrency(convertCurrency(parseFloat(amount) || 0, rate), preferredCurrency);
+  };
 
   const handleNext = async (e) => {
     if (e) e.preventDefault();
@@ -70,7 +83,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
     setError(null);
     const numAmount = parseFloat(amount);
     if (numAmount > currentBalance) {
-      setError(`Saldo insuficiente. Tienes $${currentBalance.toFixed(2)} USDC.`);
+      setError(`Saldo insuficiente. Tienes $${currentBalance.toFixed(2)}.`);
       return;
     }
     if (numAmount && recipient) {
@@ -309,7 +322,16 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                           required
                         />
                       </div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-2" style={{ color: 'var(--muted)' }}>USDC</p>
+                      {amount && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-sm font-bold mt-2"
+                          style={{ color: '#00C9A7' }}
+                        >
+                          ≈ {convertAmount()}
+                        </motion.p>
+                      )}
 
                       <AnimatePresence>
                         {error && (

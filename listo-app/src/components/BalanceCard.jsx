@@ -4,7 +4,7 @@ import { getExchangeRates, convertCurrency, formatCurrency } from '../utils/curr
 
 const FLAGS = {
   MXN: '🇲🇽', COP: '🇨🇴', GTQ: '🇬🇹', HNL: '🇭🇳',
-  PEN: '🇵🇪', CLP: '🇨🇱', ARS: '🇦🇷', USD: '🇺🇸'
+  PEN: '🇵🇪', CLP: '🇨🇱', ARS: '🇦🇷'
 };
 
 export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
@@ -76,7 +76,7 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
               {displayBalance}
             </motion.p>
           </AnimatePresence>
-          <p className="text-[10px] font-bold text-white/30 tracking-[0.25em] uppercase mt-2">USDC · Red Avalanche</p>
+          <p className="text-[10px] font-bold text-white/30 tracking-[0.25em] uppercase mt-2">Saldo en dólares</p>
         </div>
 
         {/* Local currency footer */}

@@ -21,7 +21,6 @@ const CURRENCIES = [
   { code: 'PEN', flag: '🇵🇪', name: 'Perú' },
   { code: 'CLP', flag: '🇨🇱', name: 'Chile' },
   { code: 'ARS', flag: '🇦🇷', name: 'Argentina' },
-  { code: 'USD', flag: '🇺🇸', name: 'Dólares' },
 ];
 
 const pageVariants = {
@@ -169,7 +168,7 @@ function App() {
             {[
               { t: 'Envía en segundos', d: 'A cualquier parte de Latam', n: '01' },
               { t: 'Sin comisiones ocultas', d: 'Tipo de cambio transparente', n: '02' },
-              { t: 'Protegido y seguro', d: 'Powered by Avalanche', n: '03' },
+              { t: 'Protegido y seguro', d: 'Tu dinero siempre seguro', n: '03' },
             ].map((f, i) => (
               <motion.div
                 key={i}
@@ -209,7 +208,7 @@ function App() {
             Empezar ahora
           </button>
           <p className="text-[10px] mt-4 text-center font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--muted)', opacity: 0.5 }}>
-            Powered by Bankaool · Red Avalanche
+            Powered by Bankaool
           </p>
         </motion.div>
       </div>
@@ -513,7 +512,7 @@ function App() {
                 {/* Quick actions */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { key: 'send', label: 'Enviar', icon: ArrowUpRight, onClick: () => setShowSend(true), accent: true },
+                    { key: 'send', label: 'Enviar', icon: ArrowUpRight, onClick: () => setShowSend(true) },
                     { key: 'receive', label: 'Recibir', icon: ArrowDownLeft, onClick: () => setShowReceive(true) },
                     { key: 'request', label: 'Cobrar', icon: HistoryIcon, onClick: () => handleQuickAction('request') },
                     { key: 'add', label: 'Agregar', icon: PlusIcon, onClick: () => handleQuickAction('add') },
@@ -529,15 +528,12 @@ function App() {
                     >
                       <div
                         className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-card"
-                        style={a.accent
-                          ? { background: 'linear-gradient(135deg, #00C9A7, #00A88A)', boxShadow: '0 6px 18px rgba(0,201,167,0.3)' }
-                          : { background: 'var(--surface)' }
-                        }
+                        style={{ background: '#FAF9F6' }}
                       >
                         <img
                           src={a.icon}
                           className="w-5 h-5"
-                          style={a.accent ? { filter: 'invert(1)' } : { filter: 'var(--icon-filter, invert(10%) sepia(13%) saturate(2618%) hue-rotate(202deg) brightness(96%) contrast(95%))' }}
+                          style={{ filter: 'brightness(0)', opacity: 0.8 }}
                           alt=""
                         />
                       </div>
@@ -646,6 +642,7 @@ function App() {
             currentUsername={username}
             initialRecipient={selectedContact}
             currentBalance={parseFloat(usdcBalance) + demoBalance}
+            preferredCurrency={preferredCurrency}
           />
         )}
       </AnimatePresence>
@@ -787,7 +784,6 @@ function TransactionList({ transactions, username, full = false, onViewAll }) {
                     <p className="font-black text-base tabular" style={{ color: isOutgoing ? 'var(--primary)' : '#00C9A7' }}>
                       {isOutgoing ? '−' : '+'}${tx.amount_usd.toFixed(2)}
                     </p>
-                    <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--muted)' }}>USDC</p>
                   </div>
                 </motion.a>
               );
@@ -1023,7 +1019,7 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
       </button>
 
       <p className="text-center text-[10px] font-bold uppercase tracking-[0.15em] pt-1 pb-4" style={{ color: 'var(--muted)', opacity: 0.4 }}>
-        Listo v1 · Red Avalanche
+        Listo v1
       </p>
     </div>
   );
