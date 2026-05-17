@@ -61,6 +61,7 @@ npm run dev
 
 *   `listo-app/`: The React frontend containing the banking UI and blockchain hooks.
 *   `listo-backend/`: Express server managing the username directory and transaction persistence.
+*   `website/`: Static marketing landing page, deployed to GitHub Pages.
 *   `docs/`: Full project documentation, including the pitch deck script and roadmap.
 *   `agents.md`: Documentation of the multi-agent orchestration used to build this project.
 
