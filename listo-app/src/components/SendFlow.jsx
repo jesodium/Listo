@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Html5Qrcode } from 'html5-qrcode';
 
+const spring = { type: 'spring', damping: 36, stiffness: 360, mass: 0.7 };
+
 export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient, currentBalance }) {
   const [step, setStep] = useState(initialRecipient ? 2 : 1);
   const [targetUsername, setTargetUsername] = useState(initialRecipient?.username || '');
@@ -78,173 +80,292 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
 
   return (
     <>
-      {/* backdrop */}
       <motion.div
-        className="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm"
+        className="fixed inset-0 z-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        style={{ background: 'rgba(8,8,20,0.7)', backdropFilter: 'blur(8px)' }}
         onClick={onCancel}
       />
 
-      {/* sheet */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center">
         <motion.div
-          className="w-full max-w-[480px] bg-background rounded-t-[32px] p-6 pb-10 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto"
+          className="w-full max-w-[480px] rounded-t-[32px] flex flex-col max-h-[92vh] overflow-hidden"
+          style={{ background: 'var(--surface)', boxShadow: '0 -24px 64px rgba(8,8,20,0.28), 0 -2px 8px rgba(8,8,20,0.08)' }}
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
-          transition={{ type: 'spring', damping: 32, stiffness: 320, mass: 0.8 }}
+          transition={spring}
         >
-
-          {/* grabber */}
-          <div className="w-12 h-1.5 bg-muted/20 rounded-full mx-auto mb-6" />
-
-          {/* header */}
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-[10px] font-bold text-muted uppercase tracking-[0.15em]">Paso {step} de 2</p>
-              <h2 className="text-2xl font-black text-primary tracking-tight">
-                {step === 1 ? 'Enviar a quién' : '¿Cuánto enviar?'}
-              </h2>
-            </div>
-            <button
-              onClick={onCancel}
-              className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted active:scale-95 transition"
-            >
-              ✕
-            </button>
+          {/* Grabber */}
+          <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+            <div className="w-10 h-1 rounded-full" style={{ background: 'var(--border)' }} />
           </div>
 
-          {/* progress */}
-          <div className="flex gap-1.5 mb-6">
-            <div className="flex-1 h-1 rounded-full bg-accent" />
-            <div className={`flex-1 h-1 rounded-full transition-colors ${step === 2 ? 'bg-accent' : 'bg-muted/10'}`} />
-          </div>
-
-          {step === 1 ? (
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold text-muted uppercase tracking-wider">Usuario destinatario</label>
-                <button
-                  onClick={() => setShowScanner(!showScanner)}
-                  className={`text-xs font-bold flex items-center gap-1.5 transition ${showScanner ? 'text-danger' : 'text-accent'}`}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/><path d="M14 14h3m4 0h-1m-3 3v3m3-3v3m-3-3h3"/>
-                  </svg>
-                  {showScanner ? 'Cancelar cámara' : 'Escanear QR'}
-                </button>
+          {/* Scrollable body */}
+          <div className="overflow-y-auto flex-1 px-6 pb-10 pt-2">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-5">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'var(--muted)' }}>
+                  {step === 1 ? 'Paso 1 de 2' : 'Paso 2 de 2'}
+                </p>
+                <h2 className="text-2xl font-black tracking-tight" style={{ color: 'var(--primary)' }}>
+                  {step === 1 ? 'Enviar a quién' : '¿Cuánto enviar?'}
+                </h2>
               </div>
-
-              {showScanner && (
-                <div className="mb-4 rounded-2xl overflow-hidden bg-black aspect-square relative border-2 border-accent/20">
-                  <div id="qr-reader" className="w-full h-full" />
-                  <div className="absolute inset-0 border-2 border-accent/30 pointer-events-none animate-pulse" />
-                </div>
-              )}
-
-              <form onSubmit={handleNext}>
-                <div className={`relative mb-4 rounded-2xl bg-surface border-2 transition ${error ? 'border-danger' : 'border-transparent focus-within:border-accent'}`}>
-                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-muted font-bold text-lg">@</span>
-                  <input
-                    type="text"
-                    value={targetUsername}
-                    onChange={(e) => { setError(null); setTargetUsername(e.target.value.replace(/[^a-zA-Z0-9_x]/g, '').toLowerCase()); }}
-                    placeholder="nombre_de_usuario"
-                    autoFocus
-                    className="w-full pl-10 pr-4 py-4 bg-transparent rounded-2xl focus:outline-none font-bold text-primary placeholder:text-muted/30"
-                    required
-                  />
-                </div>
-
-                {error && (
-                  <div className="mb-4 px-4 py-3 rounded-xl bg-danger/10 text-danger text-sm font-semibold">{error}</div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={!targetUsername || loading}
-                  className="w-full bg-primary text-background py-4 rounded-2xl font-bold text-base disabled:opacity-40 active:scale-[0.98] transition shadow-xl shadow-primary/10"
-                >
-                  {loading ? 'Buscando...' : 'Continuar'}
-                </button>
-              </form>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              {/* recipient card */}
-              <div className="flex items-center gap-3 mb-6 bg-surface p-3 rounded-2xl border border-muted/5 shadow-sm">
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-background flex-shrink-0">
-                  {recipient?.avatar ? (
-                    <img src={recipient.avatar} className="w-full h-full object-cover" alt="" />
-                  ) : (
-                    <div className="w-full h-full bg-accent-soft flex items-center justify-center text-accent font-black text-lg">
-                      {targetUsername[0]?.toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-wider text-muted font-bold">Enviando a</p>
-                  <p className="font-bold text-primary truncate">
-                    {recipient?.display_name || (targetUsername.startsWith('0x') ? `${targetUsername.slice(0,6)}...${targetUsername.slice(-4)}` : `@${targetUsername}`)}
-                  </p>
-                  {recipient?.display_name && <p className="text-[10px] text-muted font-bold">@{targetUsername}</p>}
-                </div>
-                <button type="button" onClick={() => setStep(1)} className="text-xs text-accent font-bold active:scale-95 px-2">Cambiar</button>
-              </div>
-
-              {/* amount */}
-              <div className="text-center py-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-muted font-bold mb-2">Monto</p>
-                <div className="flex items-center justify-center gap-1 px-4">
-                  <span className={`font-black text-muted transition-all ${amount.length > 5 ? 'text-2xl' : 'text-4xl'}`}>$</span>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => { setError(null); setAmount(e.target.value); }}
-                    placeholder="0"
-                    min="0.01"
-                    step="0.01"
-                    autoFocus
-                    className={`bg-transparent text-center font-black tracking-tighter focus:outline-none placeholder:text-muted/10 transition-all ${
-                      amount.length > 8 ? 'text-3xl' : 
-                      amount.length > 5 ? 'text-4xl' : 
-                      'text-6xl'
-                    } ${error ? 'text-danger' : 'text-primary'} w-full max-w-full`}
-                    required
-                  />
-                </div>
-                <p className="text-xs font-bold text-muted mt-1 uppercase tracking-wider">USDC</p>
-                {error && step === 2 && (
-                  <p className="text-xs font-bold text-danger mt-3 animate-pulse px-4">{error}</p>
-                )}
-              </div>
-
-              {/* quick amounts */}
-              <div className="flex gap-2 mb-6 justify-center">
-                {[10, 25, 50, 100].map(v => (
-                  <button
-                    key={v}
-                    type="button"
-                    onClick={() => setAmount(String(v))}
-                    className="px-4 py-2 rounded-full bg-surface text-primary text-sm font-bold border border-muted/5 shadow-sm active:scale-95 transition hover:bg-accent-soft hover:text-accent"
-                  >
-                    ${v}
-                  </button>
-                ))}
-              </div>
-
               <button
-                type="submit"
-                disabled={!amount || parseFloat(amount) <= 0}
-                className="w-full bg-accent text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-accent/30 disabled:opacity-40 active:scale-[0.98] transition"
+                onClick={onCancel}
+                className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 transition-transform mt-1"
+                style={{ background: 'var(--surface2)', color: 'var(--muted)' }}
               >
-                Confirmar envío
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
               </button>
-            </form>
-          )}
+            </div>
+
+            {/* Progress bar */}
+            <div className="flex gap-1.5 mb-7">
+              {[1, 2].map(i => (
+                <div key={i} className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'var(--surface2)' }}>
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{ background: 'var(--color-accent, #00C9A7)' }}
+                    initial={{ width: '0%' }}
+                    animate={{ width: step >= i ? '100%' : '0%' }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              {step === 1 ? (
+                <motion.div
+                  key="step1"
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--muted)' }}>
+                      Usuario destinatario
+                    </label>
+                    <button
+                      onClick={() => setShowScanner(!showScanner)}
+                      className="text-[11px] font-bold flex items-center gap-1.5 active:scale-95 transition-transform"
+                      style={{ color: showScanner ? '#FF4D6A' : '#00C9A7' }}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3m4 0h-1m-3 3v3m3-3v3m-3-3h3"/>
+                      </svg>
+                      {showScanner ? 'Cancelar' : 'Escanear QR'}
+                    </button>
+                  </div>
+
+                  <AnimatePresence>
+                    {showScanner && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        className="mb-4 overflow-hidden"
+                      >
+                        <div className="rounded-2xl overflow-hidden bg-black aspect-square relative" style={{ border: '2px solid rgba(0,201,167,0.25)' }}>
+                          <div id="qr-reader" className="w-full h-full" />
+                          <div className="absolute inset-0 pointer-events-none" style={{ border: '2px solid rgba(0,201,167,0.3)' }} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <form onSubmit={handleNext}>
+                    <div
+                      className="relative mb-3 rounded-2xl transition-all duration-200"
+                      style={{
+                        background: 'var(--surface2)',
+                        border: `2px solid ${error ? '#FF4D6A' : 'transparent'}`,
+                        outline: 'none',
+                      }}
+                      onFocus={() => {}}
+                    >
+                      <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-xl" style={{ color: 'var(--muted)' }}>@</span>
+                      <input
+                        type="text"
+                        value={targetUsername}
+                        onChange={(e) => { setError(null); setTargetUsername(e.target.value.replace(/[^a-zA-Z0-9_x]/g, '').toLowerCase()); }}
+                        placeholder="nombre_de_usuario"
+                        autoFocus
+                        className="w-full pl-10 pr-4 py-4 bg-transparent rounded-2xl focus:outline-none font-bold text-lg"
+                        style={{ color: 'var(--primary)' }}
+                        required
+                      />
+                    </div>
+
+                    <AnimatePresence>
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          className="mb-4 px-4 py-3 rounded-xl text-sm font-semibold"
+                          style={{ background: 'rgba(255,77,106,0.1)', color: '#FF4D6A' }}
+                        >
+                          {error}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <button
+                      type="submit"
+                      disabled={!targetUsername || loading}
+                      className="w-full py-4 rounded-2xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-40"
+                      style={{
+                        background: 'var(--primary)',
+                        color: 'var(--background)',
+                        boxShadow: '0 8px 24px rgba(13,13,26,0.2)',
+                      }}
+                    >
+                      {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <motion.span
+                            animate={{ rotate: 360 }}
+                            transition={{ repeat: Infinity, duration: 0.7, ease: 'linear' }}
+                            className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full"
+                          />
+                          Buscando...
+                        </span>
+                      ) : 'Continuar →'}
+                    </button>
+                  </form>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 24 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -24 }}
+                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <form onSubmit={handleSubmit}>
+                    {/* Recipient card */}
+                    <div
+                      className="flex items-center gap-3 mb-7 p-3.5 rounded-2xl"
+                      style={{ background: 'var(--surface2)', border: '1px solid var(--border)' }}
+                    >
+                      <div className="w-11 h-11 rounded-full overflow-hidden flex-shrink-0" style={{ background: 'var(--accent-soft)' }}>
+                        {recipient?.avatar ? (
+                          <img src={recipient.avatar} className="w-full h-full object-cover" alt="" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center font-black text-lg" style={{ color: '#00C9A7' }}>
+                            {targetUsername[0]?.toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[9px] uppercase tracking-[0.2em] font-bold mb-0.5" style={{ color: 'var(--muted)' }}>Enviando a</p>
+                        <p className="font-bold text-sm truncate" style={{ color: 'var(--primary)' }}>
+                          {recipient?.display_name || (targetUsername.startsWith('0x') ? `${targetUsername.slice(0,6)}…${targetUsername.slice(-4)}` : `@${targetUsername}`)}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="text-[11px] font-bold px-2 py-1 rounded-lg active:scale-95 transition-transform"
+                        style={{ color: '#00C9A7', background: 'rgba(0,201,167,0.1)' }}
+                      >
+                        Cambiar
+                      </button>
+                    </div>
+
+                    {/* Amount input */}
+                    <div className="text-center py-4 mb-2">
+                      <div className="flex items-center justify-center gap-1">
+                        <span
+                          className="font-black transition-all duration-200"
+                          style={{
+                            fontSize: amount.length > 5 ? '28px' : '40px',
+                            color: 'var(--muted)',
+                          }}
+                        >$</span>
+                        <input
+                          type="number"
+                          value={amount}
+                          onChange={(e) => { setError(null); setAmount(e.target.value); }}
+                          placeholder="0"
+                          min="0.01"
+                          step="0.01"
+                          autoFocus
+                          className="bg-transparent text-center font-black tracking-tighter focus:outline-none placeholder:opacity-10 transition-all duration-200 w-full max-w-[220px]"
+                          style={{
+                            fontSize: amount.length > 8 ? '32px' : amount.length > 5 ? '44px' : '64px',
+                            color: error ? '#FF4D6A' : 'var(--primary)',
+                          }}
+                          required
+                        />
+                      </div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-2" style={{ color: 'var(--muted)' }}>USDC</p>
+
+                      <AnimatePresence>
+                        {error && (
+                          <motion.p
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -4 }}
+                            className="text-xs font-bold mt-3 px-4"
+                            style={{ color: '#FF4D6A' }}
+                          >
+                            {error}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Quick amounts */}
+                    <div className="flex gap-2 mb-7 justify-center">
+                      {[10, 25, 50, 100].map(v => (
+                        <motion.button
+                          key={v}
+                          type="button"
+                          onClick={() => setAmount(String(v))}
+                          whileTap={{ scale: 0.92 }}
+                          className="px-4 py-2 rounded-full text-sm font-bold transition-colors duration-150"
+                          style={amount === String(v) ? {
+                            background: 'rgba(0,201,167,0.12)',
+                            color: '#00C9A7',
+                            border: '1.5px solid rgba(0,201,167,0.3)',
+                          } : {
+                            background: 'var(--surface2)',
+                            color: 'var(--primary)',
+                            border: '1.5px solid var(--border)',
+                          }}
+                        >
+                          ${v}
+                        </motion.button>
+                      ))}
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={!amount || parseFloat(amount) <= 0}
+                      className="w-full py-4 rounded-2xl font-bold text-base text-white active:scale-[0.98] transition-transform disabled:opacity-40"
+                      style={{
+                        background: 'linear-gradient(135deg, #00C9A7 0%, #00A88A 100%)',
+                        boxShadow: '0 8px 24px rgba(0,201,167,0.35)',
+                      }}
+                    >
+                      Confirmar envío
+                    </button>
+                  </form>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
       </div>
     </>
