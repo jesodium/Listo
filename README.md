@@ -2,7 +2,6 @@
 
 [![github license](https://img.shields.io/github/license/jesodium/Listo?color=E84142&style=flat-square)](https://github.com/jesodium/Listo/blob/main/LICENSE)
 [![github stars](https://img.shields.io/github/stars/jesodium/Listo?color=E84142&style=flat-square)](https://github.com/jesodium/Listo/stargazers)
-[![website status](https://img.shields.io/website?url=https%3A%2F%2Fjesodium.github.io%2FListo%2F&style=flat-square&label=live%20demo&color=E84142)](https://jesodium.github.io/Listo/)
 [![avalanche network](https://img.shields.io/badge/network-avalanche-E84142?style=flat-square)](https://docs.avax.network)
 
 [en] cross-border payments for latam built on avalanche. removes crypto complexity for a premium banking experience.
