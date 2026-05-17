@@ -32,3 +32,11 @@ export function formatCurrency(amount, currency) {
     currencyDisplay: 'symbol',
   }).format(amount);
 }
+
+export function formatCurrencyCode(amount, currency) {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency,
+    currencyDisplay: 'code',
+  }).format(amount);
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getExchangeRates, convertCurrency, formatCurrency } from '../utils/currency';
+import { getExchangeRates, convertCurrency, formatCurrencyCode } from '../utils/currency';
 
 export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
   const [rates, setRates] = useState(null);
@@ -13,7 +13,7 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
   const rate = rates ? rates[preferredCurrency] : null;
   const displayBalance = hidden ? '••••' : `$${balance.toFixed(2)}`;
   const localDisplay = rate
-    ? (hidden ? '••••' : formatCurrency(convertCurrency(balance, rate), preferredCurrency))
+    ? (hidden ? '••••' : formatCurrencyCode(convertCurrency(balance, rate), preferredCurrency))
     : null;
 
   return (
@@ -42,7 +42,7 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
             className="text-[40px] leading-none font-black tracking-tight tabular"
             style={{ color: 'var(--primary)' }}
           >
@@ -58,7 +58,7 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
             className="text-lg font-black mt-2"
             style={{ color: '#00C9A7' }}
           >
-            {localDisplay} {preferredCurrency}
+            {localDisplay}
           </motion.p>
         )}
       </div>
