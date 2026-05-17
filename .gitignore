@@ -7,3 +7,4 @@ dist/
 database.sqlite
 prompt.md
 .claude
+docs/
