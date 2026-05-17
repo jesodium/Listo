@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExchangeRates, convertCurrency, formatCurrency } from '../utils/currency';
 
-const FLAGS = {
-  MXN: '🇲🇽', COP: '🇨🇴', GTQ: '🇬🇹', HNL: '🇭🇳',
-  PEN: '🇵🇪', CLP: '🇨🇱', ARS: '🇦🇷'
+const CURRENCY_COLORS = {
+  MXN: '#00C9A7', COP: '#FF6B6B', GTQ: '#4ECDC4', HNL: '#45B7D1',
+  PEN: '#96CEB4', CLP: '#FFEAA7', ARS: '#DDA0DD'
 };
 
 export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
@@ -98,7 +98,7 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
             </div>
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
               style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <span className="text-lg leading-none">{FLAGS[preferredCurrency] || '🌎'}</span>
+              <div className="w-4 h-4 rounded-full" style={{ background: CURRENCY_COLORS[preferredCurrency] || '#888', boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }} />
               <span className="text-xs font-bold text-white">{preferredCurrency}</span>
             </div>
           </div>

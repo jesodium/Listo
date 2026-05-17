@@ -14,13 +14,13 @@ import HistoryIcon from './assets/icons/history.svg';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
 const CURRENCIES = [
-  { code: 'MXN', flag: '🇲🇽', name: 'México' },
-  { code: 'COP', flag: '🇨🇴', name: 'Colombia' },
-  { code: 'GTQ', flag: '🇬🇹', name: 'Guatemala' },
-  { code: 'HNL', flag: '🇭🇳', name: 'Honduras' },
-  { code: 'PEN', flag: '🇵🇪', name: 'Perú' },
-  { code: 'CLP', flag: '🇨🇱', name: 'Chile' },
-  { code: 'ARS', flag: '🇦🇷', name: 'Argentina' },
+  { code: 'MXN', color: '#00C9A7', name: 'México' },
+  { code: 'COP', color: '#FF6B6B', name: 'Colombia' },
+  { code: 'GTQ', color: '#4ECDC4', name: 'Guatemala' },
+  { code: 'HNL', color: '#45B7D1', name: 'Honduras' },
+  { code: 'PEN', color: '#96CEB4', name: 'Perú' },
+  { code: 'CLP', color: '#FFEAA7', name: 'Chile' },
+  { code: 'ARS', color: '#DDA0DD', name: 'Argentina' },
 ];
 
 const pageVariants = {
@@ -978,7 +978,7 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
                   : { background: 'var(--surface2)' }
                 }
               >
-                <span className="text-xl leading-none">{c.flag}</span>
+                <div className="w-6 h-6 rounded-full" style={{ background: c.color, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }} />
                 <span className="text-[10px] font-bold" style={{ color: preferredCurrency === c.code ? '#00C9A7' : 'var(--muted)' }}>{c.code}</span>
               </button>
             ))}
