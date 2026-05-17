@@ -1,10 +1,9 @@
 # listo
 
-[![deploy website](https://github.com/jesodium/Listo/actions/workflows/static.yml/badge.svg)](https://github.com/jesodium/Listo/actions/workflows/static.yml)
-[![license: mit](https://img.shields.io/badge/license-mit-blue.svg)](https://opensource.org/licenses/MIT)
-
-![avalanche](https://img.shields.io/badge/built%20on-avalanche-E84142?style=for-the-badge&logo=avalanche&logoColor=white)
-![usdc](https://img.shields.io/badge/settlement-usdc-2775CA?style=for-the-badge&logo=circle&logoColor=white)
+[![github license](https://img.shields.io/github/license/jesodium/Listo?color=E84142&style=flat-square)](https://github.com/jesodium/Listo/blob/main/LICENSE)
+[![github stars](https://img.shields.io/github/stars/jesodium/Listo?color=E84142&style=flat-square)](https://github.com/jesodium/Listo/stargazers)
+[![website status](https://img.shields.io/website?url=https%3A%2F%2Fjesodium.github.io%2FListo%2F&style=flat-square&label=live%20demo&color=E84142)](https://jesodium.github.io/Listo/)
+[![avalanche network](https://img.shields.io/badge/network-avalanche-E84142?style=flat-square)](https://docs.avax.network)
 
 [en] cross-border payments for latam built on avalanche. removes crypto complexity for a premium banking experience.
 
@@ -12,14 +11,20 @@
 
 ---
 
+## core engine / motor principal
+
+![avalanche](https://img.shields.io/badge/avalanche-sub--second%20finality-E84142?style=for-the-badge&logo=avalanche&logoColor=white)
+![erc-4337](https://img.shields.io/badge/erc--4337-account%20abstraction-2775CA?style=for-the-badge&logo=ethereum&logoColor=white)
+
+---
+
 ## tech stack / tecnologías
 
-![react](https://img.shields.io/badge/react-20232a?style=flat-square&logo=react&logoColor=61dafb)
-![vite](https://img.shields.io/badge/vite-646cff?style=flat-square&logo=vite&logoColor=white)
-![tailwind](https://img.shields.io/badge/tailwind-38b2ac?style=flat-square&logo=tailwind-css&logoColor=white)
-![node.js](https://img.shields.io/badge/node.js-339933?style=flat-square&logo=node.js&logoColor=white)
-![sqlite](https://img.shields.io/badge/sqlite-003b57?style=flat-square&logo=sqlite&logoColor=white)
-![erc-4337](https://img.shields.io/badge/account--abstraction-erc--4337-E84142?style=flat-square)
+- **chain / red:** avalanche fuji testnet (usdc)
+- **auth / billetera:** privy (email-to-wallet)
+- **infra:** permissionless.js + pimlico (erc-4337)
+- **frontend:** react, vite, tailwind, framer motion
+- **backend:** node.js, express, sqlite
 
 ---
 
@@ -28,16 +33,14 @@
 ### [en]
 - email-to-wallet: no seed phrases, powered by privy.
 - gasless: erc-4337 smart wallets via pimlico.
-- multi-currency: mxn, cop, gtq, pen, clp, ars.
-- instant: <3s settlement on avalanche fuji.
-- banking ui: mobile-native design and interactions.
+- multi-currency: real-time local rates (mxn, cop, pen, etc).
+- instant: sub-second finality on avalanche.
 
 ### [es]
 - email-to-wallet: sin frases semilla, potenciado por privy.
 - gasless: smart wallets erc-4337 vía pimlico.
-- multi-moneda: mxn, cop, gtq, pen, clp, ars.
-- instantáneo: liquidación <3s en avalanche fuji.
-- ui bancaria: diseño y funciones nativas móviles.
+- multi-moneda: tasas locales en tiempo real (mxn, cop, pen, etc).
+- instantáneo: finalidad en menos de un segundo en avalanche.
 
 ---
 
@@ -45,7 +48,7 @@
 1. node.js v18+ required.
 2. `cp listo-app/.env.example listo-app/.env`
 3. add `VITE_PRIVY_APP_ID`.
-4. `npm run install-all`
+4. `npm install` (root) & `npm run install-all`
 5. `npm run dev`
 
 ---
