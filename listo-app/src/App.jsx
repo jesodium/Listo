@@ -12,6 +12,7 @@ import PlusIcon from './assets/icons/plus.svg';
 import HistoryIcon from './assets/icons/history.svg';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+const EASE = [0.4, 0, 0.2, 1];
 
 const CURRENCIES = [
   { code: 'MXN', iso: 'mx', name: 'México' },
@@ -668,6 +669,7 @@ function ReceiveFunds({ walletAddress, username, onCancel }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: EASE }}
         onClick={onCancel}
         className="absolute inset-0"
         style={{ background: 'rgba(8,8,20,0.7)', backdropFilter: 'blur(8px)' }}
@@ -757,7 +759,7 @@ function TransactionList({ transactions, username, full = false, onViewAll }) {
                   style={{ borderBottom: idx < groups[day].length - 1 ? '1px solid var(--border)' : undefined }}
                 >
                   <div className="relative flex-shrink-0">
-                    <div className="w-11 h-11 rounded-full overflow-hidden" style={{ background: 'var(--surface2)' }}>
+                    <div className="w-11 h-11 rounded-full overflow-hidden border-2" style={{ background: 'var(--surface2)', borderColor: 'var(--outline)' }}>
                       {otherAvatar ? (
                         <img src={otherAvatar} className="w-full h-full object-cover" alt="" />
                       ) : (
@@ -785,7 +787,7 @@ function TransactionList({ transactions, username, full = false, onViewAll }) {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-black text-base tabular" style={{ color: isOutgoing ? 'var(--primary)' : '#00C9A7' }}>
+                    <p className="font-black text-base tabular" style={{ color: isOutgoing ? '#FF4D6A' : '#00C9A7' }}>
                       {isOutgoing ? '−' : '+'}${tx.amount_usd.toFixed(2)}
                     </p>
                   </div>
@@ -971,7 +973,7 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
         {/* Currency */}
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] mb-3" style={{ color: 'var(--muted)' }}>Moneda preferida</p>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {CURRENCIES.map(c => (
               <button
                 key={c.code}

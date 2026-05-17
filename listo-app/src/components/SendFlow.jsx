@@ -98,6 +98,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
         style={{ background: 'rgba(8,8,20,0.7)', backdropFilter: 'blur(8px)' }}
         onClick={onCancel}
       />
