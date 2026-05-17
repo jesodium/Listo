@@ -74,8 +74,10 @@ app.get('/api/transactions/:username', (req, res) => {
       t.*, 
       u1.avatar as from_avatar,
       u1.display_name as from_display_name,
+      u1.wallet_address as from_wallet_address,
       u2.avatar as to_avatar,
-      u2.display_name as to_display_name
+      u2.display_name as to_display_name,
+      u2.wallet_address as to_wallet_address
     FROM transactions t
     LEFT JOIN users u1 ON t.from_username = u1.username
     LEFT JOIN users u2 ON t.to_username = u2.username

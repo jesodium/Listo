@@ -77,3 +77,14 @@ html, body {
 
 /* Numeric tabular */
 .tabular { font-variant-numeric: tabular-nums; }
+
+/* Hide number input arrows (spinners) */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}

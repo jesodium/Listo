@@ -41,7 +41,7 @@ export function useWallet() {
   }, [authenticated, displayAddress, getBalance]);
 
   const sendUSDC = async (to, amount) => {
-    if (!client) throw new Error('Smart Wallet not ready');
+    if (!client) throw new Error('Smart Wallet no está lista');
     
     setLoading(true);
     try {
@@ -53,6 +53,12 @@ export function useWallet() {
       const contract = new ethers.Contract(USDC_FUJI.address, ERC20_ABI, staticProvider);
       const decimals = await contract.decimals();
       const parsedAmount = ethers.parseUnits(amount.toString(), decimals);
+
+      // 1. Check balance before attempting
+      const balance = await contract.balanceOf(displayAddress);
+      if (balance < parsedAmount) {
+        throw new Error('Saldo insuficiente para realizar esta transferencia.');
+      }
 
       const data = contract.interface.encodeFunctionData('transfer', [to, parsedAmount]);
 
@@ -68,7 +74,19 @@ export function useWallet() {
       return txHash;
     } catch (error) {
       console.error('Transfer error:', error);
-      throw error;
+      
+      // User-friendly error mapping
+      if (error.message.includes('user rejected')) {
+        throw new Error('La transacción fue cancelada por el usuario.');
+      }
+      if (error.message.includes('Saldo insuficiente')) {
+        throw error;
+      }
+      if (error.message.includes('network') || error.message.includes('fetch')) {
+        throw new Error('Error de conexión. Revisa tu internet e inténtalo de nuevo.');
+      }
+      
+      throw new Error('Hubo un problema al procesar el pago. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }

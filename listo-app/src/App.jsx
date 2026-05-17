@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import { useWallet } from './hooks/useWallet';
+import { useUI } from './components/UIProvider';
 import { BalanceCard } from './components/BalanceCard';
 import { SendFlow } from './components/SendFlow';
 import { DebugPanel } from './components/DebugPanel';
@@ -41,6 +42,7 @@ function groupByDay(transactions) {
 
 function App() {
   const { login, logout, authenticated, usdcBalance, sendUSDC, loading, ready, wallet, refreshBalance } = useWallet();
+  const { showToast, showAlert } = useUI();
 
   const [showSend, setShowSend] = useState(false);
   const [showReceive, setShowReceive] = useState(false);
@@ -198,7 +200,8 @@ function App() {
         localStorage.setItem('listo_display_name', updates.display_name);
         setDisplayName(updates.display_name);
       }
-    } catch (err) { alert(err.message); }
+      showToast('Perfil actualizado', 'success');
+    } catch (err) { showToast(err.message, 'error'); }
   };
 
   const handleRegisterUsername = async () => {
@@ -358,6 +361,7 @@ function App() {
       const hash = await sendUSDC(recipientAddress, amount);
       setTxHash(hash);
       setShowSend(false);
+      showToast('¡Dinero enviado con éxito!', 'success');
       try {
         await fetch(`${BACKEND_URL}/api/transactions`, {
           method: 'POST',
@@ -370,7 +374,17 @@ function App() {
         fetchTransactions();
       } catch (err) { console.error(err); }
     } catch (error) {
-      alert('Error en la transacción: ' + error.message);
+      showToast('Error en la transacción: ' + error.message, 'error');
+    }
+  };
+
+  const handleQuickAction = (action) => {
+    if (action === 'request' || action === 'add') {
+      showAlert({
+        title: 'Próximamente',
+        message: 'Esta función estará disponible en la siguiente fase de Listo. ¡Gracias por tu paciencia!',
+        confirmText: 'Entendido'
+      });
     }
   };
 
@@ -423,8 +437,8 @@ function App() {
                   {[
                     { key: 'send', label: 'Enviar', icon: ArrowUpRight, onClick: () => setShowSend(true) },
                     { key: 'receive', label: 'Recibir', icon: ArrowDownLeft, onClick: () => setShowReceive(true) },
-                    { key: 'request', label: 'Cobrar', icon: HistoryIcon, onClick: () => alert('Próximamente') },
-                    { key: 'add', label: 'Agregar', icon: PlusIcon, onClick: () => alert('Próximamente') },
+                    { key: 'request', label: 'Cobrar', icon: HistoryIcon, onClick: () => handleQuickAction('request') },
+                    { key: 'add', label: 'Agregar', icon: PlusIcon, onClick: () => handleQuickAction('add') },
                   ].map(a => (
                     <button key={a.key} onClick={a.onClick}
                       className="flex-1 flex flex-col items-center gap-2 active:scale-95 transition">
@@ -513,6 +527,7 @@ function App() {
             onLookup={handleLookup} 
             currentUsername={username}
             initialRecipient={selectedContact}
+            currentBalance={parseFloat(usdcBalance) + demoBalance}
           />
         )}
       </AnimatePresence>

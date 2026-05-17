@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Html5Qrcode } from 'html5-qrcode';
 
-export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient }) {
+export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient, currentBalance }) {
   const [step, setStep] = useState(initialRecipient ? 2 : 1);
   const [targetUsername, setTargetUsername] = useState(initialRecipient?.username || '');
   const [amount, setAmount] = useState('');
@@ -65,8 +65,14 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (amount && recipient) {
-      onSend({ targetUsername, amount: parseFloat(amount), recipientAddress: recipient.wallet_address });
+    setError(null);
+    const numAmount = parseFloat(amount);
+    if (numAmount > currentBalance) {
+      setError(`Saldo insuficiente. Tienes $${currentBalance.toFixed(2)} USDC.`);
+      return;
+    }
+    if (numAmount && recipient) {
+      onSend({ targetUsername, amount: numAmount, recipientAddress: recipient.wallet_address });
     }
   };
 
@@ -192,21 +198,28 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
               {/* amount */}
               <div className="text-center py-6">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-muted font-bold mb-2">Monto</p>
-                <div className="flex items-center justify-center gap-1">
-                  <span className="text-4xl font-black text-muted">$</span>
+                <div className="flex items-center justify-center gap-1 px-4">
+                  <span className={`font-black text-muted transition-all ${amount.length > 5 ? 'text-2xl' : 'text-4xl'}`}>$</span>
                   <input
                     type="number"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => { setError(null); setAmount(e.target.value); }}
                     placeholder="0"
                     min="0.01"
                     step="0.01"
                     autoFocus
-                    className="w-44 bg-transparent text-center text-6xl font-black text-primary tracking-tighter focus:outline-none placeholder:text-muted/10"
+                    className={`bg-transparent text-center font-black tracking-tighter focus:outline-none placeholder:text-muted/10 transition-all ${
+                      amount.length > 8 ? 'text-3xl' : 
+                      amount.length > 5 ? 'text-4xl' : 
+                      'text-6xl'
+                    } ${error ? 'text-danger' : 'text-primary'} w-full max-w-full`}
                     required
                   />
                 </div>
                 <p className="text-xs font-bold text-muted mt-1 uppercase tracking-wider">USDC</p>
+                {error && step === 2 && (
+                  <p className="text-xs font-bold text-danger mt-3 animate-pulse px-4">{error}</p>
+                )}
               </div>
 
               {/* quick amounts */}
