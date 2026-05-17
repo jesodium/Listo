@@ -6,6 +6,7 @@ import { useUI } from './components/UIProvider';
 import { BalanceCard } from './components/BalanceCard';
 import { SendFlow } from './components/SendFlow';
 import { DebugPanel } from './components/DebugPanel';
+import LogoSVG from './assets/logo.svg';
 import ArrowUpRight from './assets/icons/arrow-up-right.svg';
 import ArrowDownLeft from './assets/icons/arrow-down-left.svg';
 import PlusIcon from './assets/icons/plus.svg';
@@ -129,17 +130,14 @@ function App() {
   // Loading
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--background)' }}>
-        <div className="flex flex-col items-center gap-4">
-          <motion.div
-            animate={{ scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-            className="w-14 h-14 rounded-[18px] flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #0D0D24, #1A1A42)' }}
-          >
-            <span className="text-accent font-black text-2xl tracking-tighter">L</span>
-          </motion.div>
-        </div>
+      <div className="fixed inset-0 flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+        <motion.img
+          src={LogoSVG}
+          alt="listo"
+          className="w-14 h-14"
+          animate={{ scale: [1, 1.06, 1], opacity: [0.6, 1, 0.6] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+        />
       </div>
     );
   }
@@ -147,84 +145,122 @@ function App() {
   // Welcome / Auth
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: 'var(--background)' }}>
-        {/* Hero area */}
-        <div className="flex-1 flex flex-col justify-center items-center px-6 text-center pt-16">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', damping: 22, stiffness: 260, delay: 0.05 }}
-            className="w-[88px] h-[88px] rounded-[26px] flex items-center justify-center mb-8"
-            style={{
-              background: 'linear-gradient(145deg, #0D0D24 0%, #1A1A42 100%)',
-              boxShadow: '0 20px 40px rgba(13,13,36,0.28), 0 4px 12px rgba(0,201,167,0.2)',
-            }}
+      <div className="fixed inset-0 flex flex-col overflow-y-auto" style={{ background: '#0a0a0a' }}>
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-6 pt-14 pb-2">
+          <div className="flex items-center gap-2.5">
+            <motion.img
+              src={LogoSVG}
+              alt="listo"
+              className="w-8 h-8"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 280, delay: 0.04 }}
+            />
+            <motion.span
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1, duration: 0.3, ease: EASE }}
+              className="font-bold text-base tracking-tight"
+              style={{ color: '#ffffff' }}
+            >
+              listo
+            </motion.span>
+          </div>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-[11px] font-medium px-2.5 py-1 rounded-full"
+            style={{ background: '#1a1a1a', color: '#cccccc', border: '1px solid #333' }}
           >
-            <span className="font-black text-4xl tracking-tighter" style={{ color: '#00C9A7' }}>L</span>
-          </motion.div>
+            avalanche latam
+          </motion.span>
+        </div>
 
+        {/* Hero */}
+        <div className="flex-1 flex flex-col justify-center px-6 pt-8 pb-4">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.4, ease: EASE }}
+            transition={{ delay: 0.12, duration: 0.45, ease: EASE }}
           >
-            <h1 className="text-5xl font-black tracking-tight mb-3" style={{ color: 'var(--primary)' }}>Listo</h1>
-            <p className="font-medium mb-12 max-w-xs mx-auto leading-relaxed" style={{ color: 'var(--muted)' }}>
-              Pagos instantáneos sin fronteras. Tu dinero, tu cuenta, sin complicaciones.
+            <h1
+              className="font-bold leading-[1.04] tracking-tight mb-5"
+              style={{ color: '#ffffff', fontSize: 'clamp(36px, 9vw, 52px)', letterSpacing: '-0.03em' }}
+            >
+              mueve plata<br />
+              <span style={{ color: '#e84142' }}>a cualquier parte.</span>
+            </h1>
+            <p className="text-[15px] leading-relaxed mb-10" style={{ color: '#cccccc', maxWidth: '300px' }}>
+              manda dinero a tu familia, amigos, o clientes en latam. casi sin fees, en segundos.
             </p>
           </motion.div>
 
+          {/* Stats row */}
           <motion.div
-            className="w-full max-w-sm space-y-2.5"
-            initial={{ opacity: 0, y: 20 }}
+            className="grid grid-cols-3 gap-3 mb-10"
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18, duration: 0.4, ease: EASE }}
+            transition={{ delay: 0.22, duration: 0.38, ease: EASE }}
           >
             {[
-              { t: 'Envía en segundos', d: 'A cualquier parte de Latam', n: '01' },
-              { t: 'Sin comisiones ocultas', d: 'Tipo de cambio transparente', n: '02' },
-              { t: 'Protegido y seguro', d: 'Tu dinero siempre seguro', n: '03' },
-            ].map((f, i) => (
-              <motion.div
+              { n: '<1%', l: 'fees' },
+              { n: '<3s', l: 'llegada' },
+              { n: '7+', l: 'países' },
+            ].map((s, i) => (
+              <div
                 key={i}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + i * 0.07, duration: 0.3, ease: EASE }}
-                className="flex items-center gap-3.5 rounded-2xl p-4 text-left"
-                style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+                className="rounded-2xl p-4"
+                style={{ background: '#111111', border: '1px solid #222222' }}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-xs"
-                  style={{ background: 'rgba(0,201,167,0.1)', color: '#00C9A7' }}>
-                  {f.n}
-                </div>
+                <p className="font-bold text-xl leading-none mb-1" style={{ color: '#ffffff', letterSpacing: '-0.03em' }}>{s.n}</p>
+                <p className="text-[11px]" style={{ color: '#666666', fontFamily: 'monospace', letterSpacing: '0.05em' }}>{s.l}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Features */}
+          <motion.div
+            className="space-y-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.35, ease: EASE }}
+          >
+            {[
+              { t: 'local y cross-border', d: 'paga en tienda o manda a otro país' },
+              { t: 'para freelancers y familias', d: 'recibe pagos sin comisiones invasivas' },
+              { t: 'en segundos, no días', d: 'sin esperas ni burocracia' },
+            ].map((f, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-3 px-4 py-3.5 rounded-xl"
+                style={{ background: '#111111', border: '1px solid #1e1e1e' }}
+              >
+                <div className="w-1.5 h-1.5 rounded-full mt-[7px] flex-shrink-0" style={{ background: '#e84142' }} />
                 <div>
-                  <p className="font-bold text-sm" style={{ color: 'var(--primary)' }}>{f.t}</p>
-                  <p className="text-xs" style={{ color: 'var(--muted)' }}>{f.d}</p>
+                  <p className="text-sm font-semibold leading-tight" style={{ color: '#ffffff' }}>{f.t}</p>
+                  <p className="text-[12px] mt-0.5" style={{ color: '#666666' }}>{f.d}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </motion.div>
         </div>
 
+        {/* CTA */}
         <motion.div
-          className="px-6 pb-10 pt-6"
-          initial={{ opacity: 0, y: 16 }}
+          className="px-6 pb-12 pt-4"
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.32, duration: 0.35, ease: EASE }}
+          transition={{ delay: 0.38, duration: 0.35, ease: EASE }}
         >
           <button
             onClick={login}
-            className="w-full py-4 rounded-2xl font-bold text-base text-white active:scale-[0.97] transition-transform"
-            style={{
-              background: 'linear-gradient(135deg, #0D0D24 0%, #1A1A42 100%)',
-              boxShadow: '0 12px 28px rgba(13,13,36,0.28)',
-            }}
+            className="w-full py-4 rounded-xl font-semibold text-[15px] text-white active:scale-[0.97] transition-transform"
+            style={{ background: '#e84142', boxShadow: '0 8px 24px rgba(232,65,66,0.3)' }}
           >
-            Empezar ahora
+            empezar ahora →
           </button>
-          <p className="text-[10px] mt-4 text-center font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--muted)', opacity: 0.5 }}>
-            Powered by Bankaool
-          </p>
         </motion.div>
       </div>
     );
@@ -297,39 +333,51 @@ function App() {
   // Onboarding flow
   if (authenticated && wallet?.account?.address && !username) {
     return (
-      <div className="min-h-screen flex flex-col p-6" style={{ background: 'var(--background)' }}>
-        <div className="pt-4 mb-8">
-          <div className="flex gap-1.5 mb-3">
+      <div className="fixed inset-0 flex flex-col px-6 pt-14 pb-10 overflow-y-auto" style={{ background: '#0a0a0a' }}>
+        {/* Header */}
+        <div className="flex items-center gap-2.5 mb-12">
+          <img src={LogoSVG} alt="listo" className="w-7 h-7" />
+          <span className="font-bold text-sm" style={{ color: '#ffffff' }}>listo</span>
+        </div>
+
+        {/* Progress */}
+        <div className="mb-10">
+          <div className="flex gap-2 mb-3">
             {[1, 2].map((_, i) => (
-              <div key={i} className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: 'var(--surface2)' }}>
+              <div key={i} className="flex-1 h-0.5 rounded-full overflow-hidden" style={{ background: '#222222' }}>
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ background: '#00C9A7' }}
+                  style={{ background: '#e84142' }}
                   animate={{ width: i < onbStep ? '100%' : '0%' }}
                   transition={{ duration: 0.35, ease: EASE }}
                 />
               </div>
             ))}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--muted)' }}>Paso {onbStep} de 2</p>
+          <p className="text-[10px] tracking-[0.12em] uppercase" style={{ color: '#555555', fontFamily: 'monospace' }}>
+            paso {onbStep} de 2
+          </p>
         </div>
 
         <div className="flex-1 flex flex-col">
           <AnimatePresence mode="wait">
             <motion.div
               key={onbStep}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              exit={{ opacity: 0, x: -16 }}
               transition={{ duration: 0.2, ease: EASE }}
               className="flex-1 flex flex-col"
             >
               {onbStep === 1 && (
                 <div className="flex-1 flex flex-col">
-                  <h2 className="text-3xl font-black tracking-tight mb-2" style={{ color: 'var(--primary)' }}>Elige tu usuario</h2>
-                  <p className="mb-8" style={{ color: 'var(--muted)' }}>Así te encontrarán tus contactos.</p>
-                  <div className="relative mb-3 rounded-2xl" style={{ background: 'var(--surface)', border: '2px solid transparent', outline: 'none' }}>
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-xl" style={{ color: 'var(--muted)' }}>@</span>
+                  <h2 className="font-bold mb-2 leading-tight" style={{ color: '#ffffff', fontSize: '28px', letterSpacing: '-0.02em' }}>elige tu usuario</h2>
+                  <p className="text-sm mb-8" style={{ color: '#666666' }}>así te encontrarán tus contactos.</p>
+                  <div
+                    className="relative mb-3 rounded-xl overflow-hidden"
+                    style={{ background: '#111111', border: '1px solid #2a2a2a' }}
+                  >
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 font-bold text-lg" style={{ color: '#444444' }}>@</span>
                     <input
                       type="text"
                       value={usernameInput}
@@ -337,45 +385,52 @@ function App() {
                       placeholder="maria123"
                       maxLength={20}
                       autoFocus
-                      className="w-full pl-11 pr-4 py-5 bg-transparent rounded-2xl focus:outline-none font-bold text-lg"
-                      style={{ color: 'var(--primary)' }}
+                      className="w-full pl-11 pr-4 py-5 bg-transparent focus:outline-none font-semibold text-lg"
+                      style={{ color: '#ffffff' }}
                     />
                   </div>
-                  <p className="text-xs px-1" style={{ color: 'var(--muted)' }}>Mínimo 3 caracteres. Solo letras, números y _</p>
+                  <p className="text-[11px] px-1" style={{ color: '#444444', fontFamily: 'monospace' }}>mín. 3 caracteres · letras, números y _</p>
                 </div>
               )}
 
               {onbStep === 2 && (
                 <div className="flex-1 flex flex-col">
-                  <h2 className="text-3xl font-black tracking-tight mb-2" style={{ color: 'var(--primary)' }}>Sube tu foto</h2>
-                  <p className="mb-8" style={{ color: 'var(--muted)' }}>Opcional, ayuda a tus contactos a reconocerte.</p>
+                  <h2 className="font-bold mb-2 leading-tight" style={{ color: '#ffffff', fontSize: '28px', letterSpacing: '-0.02em' }}>sube tu foto</h2>
+                  <p className="text-sm mb-8" style={{ color: '#666666' }}>opcional — ayuda a tus contactos a reconocerte.</p>
                   <div className="flex justify-center mb-6">
                     <label className="relative cursor-pointer group">
-                      <div className="w-36 h-36 rounded-full overflow-hidden" style={{ border: '4px solid var(--surface)', boxShadow: '0 12px 32px rgba(0,0,0,0.12)' }}>
+                      <div
+                        className="w-32 h-32 rounded-full overflow-hidden"
+                        style={{ border: '2px solid #2a2a2a', background: '#111111' }}
+                      >
                         {avatarInput ? (
                           <img src={avatarInput} className="w-full h-full object-cover" alt="" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-5xl font-black" style={{ background: 'rgba(0,201,167,0.1)', color: '#00C9A7' }}>
+                          <div className="w-full h-full flex items-center justify-center text-4xl font-bold" style={{ color: '#333333' }}>
                             {usernameInput[0]?.toUpperCase() || '+'}
                           </div>
                         )}
                       </div>
-                      <div className="absolute bottom-1 right-1 w-10 h-10 rounded-full flex items-center justify-center group-active:scale-95 transition-transform"
-                        style={{ background: '#00C9A7', boxShadow: '0 4px 12px rgba(0,201,167,0.4)' }}>
-                        <img src={PlusIcon} className="w-5 h-5 invert" alt="" />
+                      <div
+                        className="absolute bottom-0 right-0 w-9 h-9 rounded-full flex items-center justify-center group-active:scale-95 transition-transform"
+                        style={{ background: '#e84142', boxShadow: '0 4px 12px rgba(232,65,66,0.35)' }}
+                      >
+                        <img src={PlusIcon} className="w-4 h-4 invert" alt="" />
                       </div>
                       <input type="file" accept="image/*" onChange={(e) => handleImageChange(e, false)} className="hidden" />
                     </label>
                   </div>
-                  <p className="text-center text-sm font-bold" style={{ color: 'var(--primary)' }}>{usernameInput ? `@${usernameInput}` : ''}</p>
+                  {usernameInput && (
+                    <p className="text-center text-sm font-medium" style={{ color: '#555555', fontFamily: 'monospace' }}>@{usernameInput}</p>
+                  )}
                   <AnimatePresence>
                     {onbError && (
                       <motion.div
                         initial={{ opacity: 0, y: -6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="mt-4 px-4 py-3 rounded-xl text-sm font-semibold text-center"
-                        style={{ background: 'rgba(255,77,106,0.1)', color: '#FF4D6A' }}
+                        className="mt-4 px-4 py-3 rounded-xl text-sm font-medium text-center"
+                        style={{ background: 'rgba(232,65,66,0.1)', color: '#e84142', border: '1px solid rgba(232,65,66,0.2)' }}
                       >
                         {onbError}
                       </motion.div>
@@ -391,10 +446,10 @@ function App() {
           {onbStep > 1 && (
             <button
               onClick={() => setOnbStep(onbStep - 1)}
-              className="px-6 py-4 rounded-2xl font-bold active:scale-95 transition-transform"
-              style={{ background: 'var(--surface)', color: 'var(--primary)' }}
+              className="px-6 py-4 rounded-xl font-semibold active:scale-95 transition-transform text-sm"
+              style={{ background: '#111111', color: '#cccccc', border: '1px solid #2a2a2a' }}
             >
-              Atrás
+              atrás
             </button>
           )}
           <button
@@ -407,10 +462,10 @@ function App() {
               }
             }}
             disabled={(onbStep === 1 && usernameInput.length < 3) || registering}
-            className="flex-1 py-4 rounded-2xl font-bold text-white disabled:opacity-40 active:scale-[0.98] transition-transform"
-            style={{ background: 'linear-gradient(135deg, #0D0D24, #1A1A42)', boxShadow: '0 8px 24px rgba(13,13,26,0.2)' }}
+            className="flex-1 py-4 rounded-xl font-semibold text-white disabled:opacity-30 active:scale-[0.98] transition-transform text-sm"
+            style={{ background: '#e84142', boxShadow: '0 8px 24px rgba(232,65,66,0.28)' }}
           >
-            {registering ? 'Guardando...' : onbStep === 2 ? 'Finalizar' : 'Continuar'}
+            {registering ? 'guardando...' : onbStep === 2 ? 'finalizar →' : 'continuar →'}
           </button>
         </div>
       </div>
@@ -474,10 +529,11 @@ function App() {
     <div className="min-h-screen pb-28" style={{ background: 'var(--background)' }}>
       
       {/* Header */}
-      <header className="sticky top-0 z-30 px-5 pt-safe-top" style={{
+      <header className="sticky top-0 z-30 px-5" style={{
         background: 'var(--background)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
       }}>
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
@@ -1129,9 +1185,6 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
         Cerrar sesión
       </button>
 
-      <p className="text-center text-[10px] font-bold uppercase tracking-[0.15em] pt-1 pb-4" style={{ color: 'var(--muted)', opacity: 0.4 }}>
-        Listo v1
-      </p>
     </div>
   );
 }

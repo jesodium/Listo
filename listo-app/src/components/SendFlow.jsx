@@ -315,7 +315,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                             fontSize: amount.length > 5 ? '28px' : '40px',
                             color: 'var(--muted)',
                           }}
-                        >{displayCurrency}</span>
+                        >USD</span>
                         <input
                           type="number"
                           value={amount}
