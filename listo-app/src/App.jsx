@@ -14,14 +14,18 @@ import HistoryIcon from './assets/icons/history.svg';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
 
 const CURRENCIES = [
-  { code: 'MXN', color: '#00C9A7', name: 'México' },
-  { code: 'COP', color: '#FF6B6B', name: 'Colombia' },
-  { code: 'GTQ', color: '#4ECDC4', name: 'Guatemala' },
-  { code: 'HNL', color: '#45B7D1', name: 'Honduras' },
-  { code: 'PEN', color: '#96CEB4', name: 'Perú' },
-  { code: 'CLP', color: '#FFEAA7', name: 'Chile' },
-  { code: 'ARS', color: '#DDA0DD', name: 'Argentina' },
+  { code: 'MXN', iso: 'mx', name: 'México' },
+  { code: 'COP', iso: 'co', name: 'Colombia' },
+  { code: 'GTQ', iso: 'gt', name: 'Guatemala' },
+  { code: 'HNL', iso: 'hn', name: 'Honduras' },
+  { code: 'PEN', iso: 'pe', name: 'Perú' },
+  { code: 'CLP', iso: 'cl', name: 'Chile' },
+  { code: 'ARS', iso: 'ar', name: 'Argentina' },
 ];
+
+const FlagIcon = ({ iso }) => <span className={`fi fi-${iso} rounded`} style={{ fontSize: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }} />;
+
+
 
 const pageVariants = {
   initial: { opacity: 0, y: 10 },
@@ -978,7 +982,7 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
                   : { background: 'var(--surface2)' }
                 }
               >
-                <div className="w-6 h-6 rounded-full" style={{ background: c.color, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }} />
+                <FlagIcon iso={c.iso} />
                 <span className="text-[10px] font-bold" style={{ color: preferredCurrency === c.code ? '#00C9A7' : 'var(--muted)' }}>{c.code}</span>
               </button>
             ))}
