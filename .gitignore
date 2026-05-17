@@ -6,3 +6,4 @@ dist/
 *.local
 database.sqlite
 prompt.md
+.claude

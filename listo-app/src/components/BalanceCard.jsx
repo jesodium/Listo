@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getExchangeRates, convertCurrency, formatCurrencyCode } from '../utils/currency';
 
+const EASE = "easeInOutSine";
+
 export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
   const [rates, setRates] = useState(null);
   const [hidden, setHidden] = useState(false);
@@ -10,10 +12,12 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
     getExchangeRates().then(setRates);
   }, []);
 
-  const rate = rates ? rates[preferredCurrency] : null;
+  const isNone = preferredCurrency === 'NONE';
+  const displayCurrency = isNone ? 'USD' : preferredCurrency;
+  const rate = rates ? rates[displayCurrency] : null;
   const displayBalance = hidden ? '••••' : `$${balance.toFixed(2)}`;
-  const localDisplay = rate
-    ? (hidden ? '••••' : formatCurrencyCode(convertCurrency(balance, rate), preferredCurrency))
+  const localDisplay = !isNone && rate
+    ? (hidden ? '••••' : formatCurrencyCode(convertCurrency(balance, rate), displayCurrency))
     : null;
 
   return (
@@ -42,7 +46,7 @@ export function BalanceCard({ balance = 0.00, preferredCurrency = 'MXN' }) {
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.15, ease: EASE }}
             className="text-[40px] leading-none font-black tracking-tight tabular"
             style={{ color: 'var(--primary)' }}
           >

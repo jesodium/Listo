@@ -10,9 +10,11 @@ import ArrowUpRight from './assets/icons/arrow-up-right.svg';
 import ArrowDownLeft from './assets/icons/arrow-down-left.svg';
 import PlusIcon from './assets/icons/plus.svg';
 import HistoryIcon from './assets/icons/history.svg';
+import BuildingIcon from './assets/icons/building.svg';
+
+const EASE = "easeInOutSine";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
-const EASE = [0.4, 0, 0.2, 1];
 
 const CURRENCIES = [
   { code: 'MXN', iso: 'mx', name: 'México' },
@@ -23,6 +25,8 @@ const CURRENCIES = [
   { code: 'CLP', iso: 'cl', name: 'Chile' },
   { code: 'ARS', iso: 'ar', name: 'Argentina' },
 ];
+
+const CURRENCY_NONE = 'NONE';
 
 const FlagIcon = ({ iso }) => <span className={`fi fi-${iso} rounded`} style={{ fontSize: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }} />;
 
@@ -56,7 +60,7 @@ function App() {
   const [showSend, setShowSend] = useState(false);
   const [showReceive, setShowReceive] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
-  const [txHash, setTxHash] = useState(null);
+  const [selectedTx, setSelectedTx] = useState(null);
   const [username, setUsername] = useState(() => localStorage.getItem('listo_username') || null);
   const [displayName, setDisplayName] = useState(() => localStorage.getItem('listo_display_name') || null);
   const [avatar, setAvatar] = useState(() => localStorage.getItem('listo_avatar') || null);
@@ -65,12 +69,18 @@ function App() {
   const [demoBalance, setDemoBalance] = useState(() => parseFloat(localStorage.getItem('listo_demo_balance') || '0'));
   const [transactions, setTransactions] = useState([]);
   const [tab, setTab] = useState('home');
+  const [favoriteContacts, setFavoriteContacts] = useState(() => {
+    const saved = localStorage.getItem('listo_favorite_contacts');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   useEffect(() => {
     if (darkMode) document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
     localStorage.setItem('listo_dark_mode', darkMode);
   }, [darkMode]);
+
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const [onbStep, setOnbStep] = useState(1);
   const [usernameInput, setUsernameInput] = useState('');
@@ -156,7 +166,7 @@ function App() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ delay: 0.1, duration: 0.4, ease: EASE }}
           >
             <h1 className="text-5xl font-black tracking-tight mb-3" style={{ color: 'var(--primary)' }}>Listo</h1>
             <p className="font-medium mb-12 max-w-xs mx-auto leading-relaxed" style={{ color: 'var(--muted)' }}>
@@ -168,7 +178,7 @@ function App() {
             className="w-full max-w-sm space-y-2.5"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ delay: 0.18, duration: 0.4, ease: EASE }}
           >
             {[
               { t: 'Envía en segundos', d: 'A cualquier parte de Latam', n: '01' },
@@ -179,7 +189,7 @@ function App() {
                 key={i}
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + i * 0.07, duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ delay: 0.2 + i * 0.07, duration: 0.3, ease: EASE }}
                 className="flex items-center gap-3.5 rounded-2xl p-4 text-left"
                 style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
               >
@@ -200,7 +210,7 @@ function App() {
           className="px-6 pb-10 pt-6"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.32, duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ delay: 0.32, duration: 0.35, ease: EASE }}
         >
           <button
             onClick={login}
@@ -296,7 +306,7 @@ function App() {
                   className="h-full rounded-full"
                   style={{ background: '#00C9A7' }}
                   animate={{ width: i < onbStep ? '100%' : '0%' }}
-                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ duration: 0.35, ease: EASE }}
                 />
               </div>
             ))}
@@ -311,7 +321,7 @@ function App() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ duration: 0.2, ease: EASE }}
               className="flex-1 flex flex-col"
             >
               {onbStep === 1 && (
@@ -425,7 +435,6 @@ function App() {
   const handleSend = async ({ targetUsername, amount, recipientAddress }) => {
     try {
       const hash = await sendUSDC(recipientAddress, amount);
-      setTxHash(hash);
       setShowSend(false);
       showToast('¡Dinero enviado con éxito!', 'success');
       try {
@@ -445,7 +454,7 @@ function App() {
   };
 
   const handleQuickAction = (action) => {
-    if (action === 'request' || action === 'add') {
+    if (action === 'request' || action === 'add' || action === 'directory') {
       showAlert({
         title: 'Próximamente',
         message: 'Esta función estará disponible en la siguiente fase de Listo. ¡Gracias por tu paciencia!',
@@ -463,6 +472,7 @@ function App() {
 
   return (
     <div className="min-h-screen pb-28" style={{ background: 'var(--background)' }}>
+      
       {/* Header */}
       <header className="sticky top-0 z-30 px-5 pt-safe-top" style={{
         background: 'var(--background)',
@@ -485,16 +495,6 @@ function App() {
               <p className="font-bold text-sm leading-tight" style={{ color: 'var(--primary)' }}>{displayName || `@${username}`}</p>
             </div>
           </div>
-          <button
-            className="w-10 h-10 rounded-full flex items-center justify-center relative active:scale-90 transition-transform"
-            style={{ background: 'var(--surface)' }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: 'var(--primary)' }} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full ring-2" style={{ background: '#00C9A7', ringColor: 'var(--surface)' }} />
-          </button>
         </div>
         {/* Bottom border */}
         <div className="h-px" style={{ background: 'var(--border)' }} />
@@ -519,7 +519,7 @@ function App() {
                   {[
                     { key: 'send', label: 'Enviar', icon: ArrowUpRight, onClick: () => setShowSend(true) },
                     { key: 'receive', label: 'Recibir', icon: ArrowDownLeft, onClick: () => setShowReceive(true) },
-                    { key: 'request', label: 'Cobrar', icon: HistoryIcon, onClick: () => handleQuickAction('request') },
+                    { key: 'directory', label: 'Directorio', icon: BuildingIcon, onClick: () => handleQuickAction('directory') },
                     { key: 'add', label: 'Agregar', icon: PlusIcon, onClick: () => handleQuickAction('add') },
                   ].map((a, i) => (
                     <motion.button
@@ -528,7 +528,7 @@ function App() {
                       whileTap={{ scale: 0.92 }}
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05, duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                      transition={{ delay: i * 0.05, duration: 0.2, ease: EASE }}
                       className="flex flex-col items-center gap-2"
                     >
                       <div
@@ -547,29 +547,7 @@ function App() {
                   ))}
                 </div>
 
-                {txHash && (
-                  <motion.a
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    href={`https://testnet.snowtrace.io/tx/${txHash}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 rounded-2xl p-4 active:scale-[0.99] transition-transform"
-                    style={{ background: 'rgba(0,201,167,0.08)', border: '1px solid rgba(0,201,167,0.2)' }}
-                  >
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(0,201,167,0.15)' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00C9A7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm" style={{ color: '#00C9A7' }}>Transacción exitosa</p>
-                      <p className="text-xs" style={{ color: 'rgba(0,201,167,0.7)' }}>Ver comprobante en la red →</p>
-                    </div>
-                  </motion.a>
-                )}
-
-                <TransactionList transactions={transactions.slice(0, 5)} username={username} onViewAll={() => setTab('activity')} />
+                <TransactionList transactions={transactions.slice(0, 5)} username={username} onViewAll={() => setTab('activity')} onSelectTx={setSelectedTx} />
               </>
             )}
 
@@ -577,7 +555,7 @@ function App() {
               <div className="pt-1">
                 <h1 className="text-[28px] font-black tracking-tight mb-1" style={{ color: 'var(--primary)' }}>Actividad</h1>
                 <p className="text-sm mb-5" style={{ color: 'var(--muted)' }}>Historial completo de movimientos</p>
-                <TransactionList transactions={transactions} username={username} full />
+                <TransactionList transactions={transactions} username={username} full onSelectTx={setSelectedTx} />
               </div>
             )}
 
@@ -585,10 +563,15 @@ function App() {
               <div className="pt-1">
                 <h1 className="text-[28px] font-black tracking-tight mb-1" style={{ color: 'var(--primary)' }}>Contactos</h1>
                 <p className="text-sm mb-5" style={{ color: 'var(--muted)' }}>Personas con las que has movido dinero</p>
-                <ContactsList transactions={transactions} username={username} onSend={(c) => {
-                  setSelectedContact(c);
-                  setShowSend(true);
-                }} />
+                <ContactsList 
+                  transactions={transactions} 
+                  username={username} 
+                  favoriteContacts={favoriteContacts}
+                  setFavoriteContacts={(favs) => { setFavoriteContacts(favs); localStorage.setItem('listo_favorite_contacts', JSON.stringify(favs)); }}
+                  onSend={(c) => {
+                    setSelectedContact(c);
+                    setShowSend(true);
+                  }} />
               </div>
             )}
 
@@ -600,7 +583,7 @@ function App() {
                 preferredCurrency={preferredCurrency}
                 setPreferredCurrency={(c) => { setPreferredCurrency(c); localStorage.setItem('listo_currency', c); }}
                 darkMode={darkMode}
-                setDarkMode={setDarkMode}
+                setDarkMode={toggleDarkMode}
                 onUpdateProfile={handleUpdateProfile}
                 onImageChange={(e) => handleImageChange(e, true)}
                 onLogout={() => { logout(); localStorage.clear(); window.location.reload(); }}
@@ -655,6 +638,12 @@ function App() {
       <AnimatePresence>
         {showReceive && (
           <ReceiveFunds walletAddress={wallet?.account?.address} username={username} onCancel={() => setShowReceive(false)} />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedTx && (
+          <TransactionDetail tx={selectedTx} username={username} onClose={() => setSelectedTx(null)} />
         )}
       </AnimatePresence>
     </div>
@@ -713,8 +702,93 @@ function ReceiveFunds({ walletAddress, username, onCancel }) {
   );
 }
 
+// -------- Transaction Detail Modal --------
+function TransactionDetail({ tx, username, onClose }) {
+  if (!tx) return null;
+
+  const isOutgoing = tx.from_username === username;
+  const otherUser = isOutgoing ? tx.to_username : tx.from_username;
+  const otherDisplayName = isOutgoing ? tx.to_display_name : tx.from_display_name;
+  const otherAvatar = isOutgoing ? tx.to_avatar : tx.from_avatar;
+  
+  const txDate = new Date(tx.timestamp);
+  const dateStr = txDate.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const timeStr = txDate.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2, ease: EASE }}
+        onClick={onClose}
+        className="absolute inset-0"
+        style={{ background: 'rgba(8,8,20,0.7)', backdropFilter: 'blur(8px)' }}
+      />
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 34, stiffness: 340, mass: 0.7 }}
+        className="relative w-full max-w-[480px] flex flex-col rounded-t-[32px] overflow-hidden"
+        style={{ background: 'var(--surface)', boxShadow: '0 -24px 64px rgba(8,8,20,0.28)' }}
+      >
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full" style={{ background: 'var(--border)' }} />
+        </div>
+
+        <div className="px-6 pb-8 pt-4">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-black tracking-tight" style={{ color: 'var(--primary)' }}>Detalles</h2>
+            <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: 'var(--surface2)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{ color: 'var(--primary)' }} strokeWidth="2.5" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-3" style={{ background: 'var(--surface2)', borderColor: isOutgoing ? '#FF4D6A' : '#00C9A7' }}>
+              {otherAvatar ? (
+                <img src={otherAvatar} className="w-full h-full object-cover" alt="" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center font-black text-xl" style={{ background: 'rgba(0,201,167,0.1)', color: '#00C9A7' }}>
+                  {otherUser?.[0]?.toUpperCase()}
+                </div>
+              )}
+            </div>
+            <div>
+              <p className="font-bold text-lg" style={{ color: 'var(--primary)' }}>{otherDisplayName || `@${otherUser}`}</p>
+              <p className="text-sm" style={{ color: 'var(--muted)' }}>{isOutgoing ? 'Enviado' : 'Recibido'}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="rounded-2xl p-4" style={{ background: 'var(--surface2)' }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>Monto</p>
+              <p className="text-2xl font-black tabular" style={{ color: isOutgoing ? '#FF4D6A' : '#00C9A7' }}>
+                {isOutgoing ? '−' : '+'}${tx.amount_usd.toFixed(2)} USD
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl p-4" style={{ background: 'var(--surface2)' }}>
+                <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>Fecha</p>
+                <p className="font-semibold text-sm" style={{ color: 'var(--primary)' }}>{dateStr}</p>
+              </div>
+              <div className="rounded-2xl p-4" style={{ background: 'var(--surface2)' }}>
+                <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--muted)' }}>Hora</p>
+                <p className="font-semibold text-sm" style={{ color: 'var(--primary)' }}>{timeStr}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 // -------- Transaction list --------
-function TransactionList({ transactions, username, full = false, onViewAll }) {
+function TransactionList({ transactions, username, full = false, onViewAll, onSelectTx }) {
   const groups = useMemo(() => groupByDay(transactions), [transactions]);
   const keys = Object.keys(groups);
 
@@ -749,13 +823,11 @@ function TransactionList({ transactions, username, full = false, onViewAll }) {
               const otherAvatar = isOutgoing ? tx.to_avatar : tx.from_avatar;
               const otherDisplayName = isOutgoing ? tx.to_display_name : tx.from_display_name;
               return (
-                <motion.a
+                <motion.button
                   key={tx.id}
-                  href={`https://testnet.snowtrace.io/tx/${tx.tx_hash}`}
-                  target="_blank"
-                  rel="noreferrer"
+                  onClick={() => onSelectTx && onSelectTx(tx)}
                   whileTap={{ backgroundColor: 'var(--surface2)' }}
-                  className="flex items-center gap-3 p-4 active:opacity-80 transition-opacity"
+                  className="w-full flex items-center gap-3 p-4 active:opacity-80 transition-opacity text-left"
                   style={{ borderBottom: idx < groups[day].length - 1 ? '1px solid var(--border)' : undefined }}
                 >
                   <div className="relative flex-shrink-0">
@@ -791,7 +863,7 @@ function TransactionList({ transactions, username, full = false, onViewAll }) {
                       {isOutgoing ? '−' : '+'}${tx.amount_usd.toFixed(2)}
                     </p>
                   </div>
-                </motion.a>
+                </motion.button>
               );
             })}
           </div>
@@ -802,8 +874,16 @@ function TransactionList({ transactions, username, full = false, onViewAll }) {
 }
 
 // -------- Contacts --------
-function ContactsList({ transactions, username, onSend }) {
+function ContactsList({ transactions, username, favoriteContacts, setFavoriteContacts, onSend }) {
   const [search, setSearch] = useState('');
+
+  const toggleFavorite = (u) => {
+    if (favoriteContacts.includes(u)) {
+      setFavoriteContacts(favoriteContacts.filter(f => f !== u));
+    } else {
+      setFavoriteContacts([...favoriteContacts, u]);
+    }
+  };
 
   const contacts = useMemo(() => {
     const map = new Map();
@@ -816,10 +896,13 @@ function ContactsList({ transactions, username, onSend }) {
       if (!map.has(other)) map.set(other, { username: other, avatar: av, display_name: dn, wallet_address: wa });
     });
     const list = Array.from(map.values());
-    if (!search) return list;
+    const favorites = list.filter(c => favoriteContacts.includes(c.username));
+    const others = list.filter(c => !favoriteContacts.includes(c.username));
+    const sorted = [...favorites, ...others];
+    if (!search) return sorted;
     const s = search.toLowerCase();
-    return list.filter(c => c.username.toLowerCase().includes(s) || c.display_name?.toLowerCase().includes(s));
-  }, [transactions, username, search]);
+    return sorted.filter(c => c.username.toLowerCase().includes(s) || c.display_name?.toLowerCase().includes(s));
+  }, [transactions, username, search, favoriteContacts]);
 
   return (
     <div className="space-y-4">
@@ -858,10 +941,10 @@ function ContactsList({ transactions, username, onSend }) {
       ) : (
         <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           {contacts.map((c, idx) => (
-            <button
-              key={c.username}
+            <div
+              role="button"
               onClick={() => onSend(c)}
-              className="w-full flex items-center gap-3 p-4 active:opacity-70 transition-opacity text-left"
+              className="w-full flex items-center gap-3 p-4 active:opacity-70 transition-opacity cursor-pointer"
               style={{ borderBottom: idx < contacts.length - 1 ? '1px solid var(--border)' : undefined }}
             >
               <div className="w-11 h-11 rounded-full overflow-hidden flex-shrink-0" style={{ background: 'var(--surface2)' }}>
@@ -877,10 +960,16 @@ function ContactsList({ transactions, username, onSend }) {
                 <p className="font-bold text-sm truncate" style={{ color: 'var(--primary)' }}>{c.display_name || `@${c.username}`}</p>
                 <p className="text-[11px]" style={{ color: 'var(--muted)' }}>Toca para enviar</p>
               </div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--muted)', opacity: 0.4 }}>
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); toggleFavorite(c.username); }}
+                className="p-1"
+                style={{ color: favoriteContacts.includes(c.username) ? '#FFD700' : 'var(--muted)', opacity: favoriteContacts.includes(c.username) ? 1 : 0.4 }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill={favoriteContacts.includes(c.username) ? '#FFD700' : 'none'} stroke="currentColor" strokeWidth="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </button>
+            </div>
           ))}
         </div>
       )}
@@ -956,7 +1045,7 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
             <p className="text-xs" style={{ color: 'var(--muted)' }}>Cambia la apariencia de la app</p>
           </div>
           <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={setDarkMode}
             className="w-12 h-6.5 rounded-full relative transition-colors duration-200 flex-shrink-0"
             style={{ background: darkMode ? '#00C9A7' : 'var(--surface2)', border: '1.5px solid var(--border)' }}
           >
@@ -973,7 +1062,7 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
         {/* Currency */}
         <div>
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] mb-3" style={{ color: 'var(--muted)' }}>Moneda preferida</p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {CURRENCIES.map(c => (
               <button
                 key={c.code}
@@ -988,7 +1077,23 @@ function SettingsTab({ username, displayName, avatar, preferredCurrency, setPref
                 <span className="text-[10px] font-bold" style={{ color: preferredCurrency === c.code ? '#00C9A7' : 'var(--muted)' }}>{c.code}</span>
               </button>
             ))}
+            <button
+              onClick={() => setPreferredCurrency(CURRENCY_NONE)}
+              className="flex flex-col items-center gap-1 py-3 rounded-xl transition-all active:scale-95"
+              style={preferredCurrency === CURRENCY_NONE
+                ? { background: 'rgba(0,201,167,0.1)', outline: '1.5px solid rgba(0,201,167,0.4)' }
+                : { background: 'var(--surface2)' }
+              }
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--muted)' }}>
+                <circle cx="12" cy="12" r="10" /><path d="M4.93 4.93l14.14 14.14" />
+              </svg>
+              <span className="text-[10px] font-bold" style={{ color: preferredCurrency === CURRENCY_NONE ? '#00C9A7' : 'var(--muted)' }}>None</span>
+            </button>
           </div>
+          {preferredCurrency === CURRENCY_NONE && (
+            <p className="text-[10px] mt-2" style={{ color: 'var(--muted)' }}>No se mostrará conversión. Mostrando en USD.</p>
+          )}
         </div>
       </div>
 

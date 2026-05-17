@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Html5Qrcode } from 'html5-qrcode';
-import { getExchangeRates, convertCurrency, formatCurrency } from '../utils/currency';
+import { getExchangeRates, convertCurrency } from '../utils/currency';
 
 const spring = { type: 'spring', damping: 36, stiffness: 360, mass: 0.7 };
+const EASE = "easeInOutSine";
 
 export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient, currentBalance, preferredCurrency = 'MXN' }) {
   const [step, setStep] = useState(initialRecipient ? 2 : 1);
@@ -20,11 +21,19 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
     getExchangeRates().then(setRates);
   }, []);
 
+  const isNone = preferredCurrency === 'NONE';
+  const displayCurrency = isNone ? 'USD' : preferredCurrency;
+
   const convertAmount = () => {
-    if (!amount || !rates) return null;
+    if (!amount || !rates || isNone) return null;
     const rate = rates[preferredCurrency];
     if (!rate) return null;
-    return formatCurrency(convertCurrency(parseFloat(amount) || 0, rate), preferredCurrency);
+    const converted = convertCurrency(parseFloat(amount) || 0, rate);
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: displayCurrency,
+      currencyDisplay: 'code',
+    }).format(converted);
   };
 
   const handleNext = async (e) => {
@@ -98,7 +107,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: 0.2, ease: EASE }}
         style={{ background: 'rgba(8,8,20,0.7)', backdropFilter: 'blur(8px)' }}
         onClick={onCancel}
       />
@@ -149,7 +158,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                     style={{ background: 'var(--color-accent, #00C9A7)' }}
                     initial={{ width: '0%' }}
                     animate={{ width: step >= i ? '100%' : '0%' }}
-                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    transition={{ duration: 0.35, ease: EASE }}
                   />
                 </div>
               ))}
@@ -162,7 +171,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ duration: 0.22, ease: EASE }}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: 'var(--muted)' }}>
@@ -187,7 +196,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{ duration: 0.25, ease: EASE }}
                         className="mb-4 overflow-hidden"
                       >
                         <div className="rounded-2xl overflow-hidden bg-black aspect-square relative" style={{ border: '2px solid rgba(0,201,167,0.25)' }}>
@@ -264,7 +273,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -24 }}
-                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                  transition={{ duration: 0.22, ease: EASE }}
                 >
                   <form onSubmit={handleSubmit}>
                     {/* Recipient card */}
@@ -306,7 +315,7 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialR
                             fontSize: amount.length > 5 ? '28px' : '40px',
                             color: 'var(--muted)',
                           }}
-                        >$</span>
+                        >{displayCurrency}</span>
                         <input
                           type="number"
                           value={amount}

@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const UIContext = createContext(null);
+const EASE = "easeInOutSine";
 
 export function UIProvider({ children }) {
   const [toasts, setToasts] = useState([]);
@@ -73,7 +74,7 @@ export function UIProvider({ children }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ duration: 0.2, ease: EASE }}
               onClick={hideAlert}
               className="absolute inset-0 bg-primary/40 backdrop-blur-sm"
             />
