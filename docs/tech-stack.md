@@ -16,12 +16,13 @@
 │   Sin app store necesario para el demo      │
 └──────────────────┬──────────────────────────┘
                    │
-┌──────────────────▼──────────────────────────┐
+┌─────────────────────────────────────────────┐
 │         WALLET ABSTRACTION                  │
 │   Privy.io                                  │
-│   Wallet desde número de teléfono           │
+│   Wallet desde correo electrónico           │
 │   Sin seed phrases. 10 líneas de código.    │
 └──────────────────┬──────────────────────────┘
+
                    │
 ┌──────────────────▼──────────────────────────┐
 │            BLOCKCHAIN                       │
@@ -44,7 +45,7 @@
 ## Herramienta por Herramienta
 
 ### 🔐 Privy.io — Tu Herramienta Más Importante
-**Qué hace:** Crea wallets de Avalanche desde un número de teléfono. El usuario nunca ve seed phrases.
+**Qué hace:** Crea wallets de Avalanche desde un correo electrónico. El usuario nunca ve seed phrases.
 
 **Por qué lo usas:** Sin esto tienes que pedirle al usuario que instale MetaMask y copie direcciones 0x. Eso rompe toda la narrativa de "se siente como un banco."
 
@@ -58,7 +59,7 @@ npm install @privy-io/react-auth
 ```jsx
 // Tan simple como esto:
 const { login } = usePrivy();
-// El usuario ingresa su número → wallet creado → listo
+// El usuario ingresa su correo → wallet creado → listo
 ```
 
 ---
@@ -168,4 +169,4 @@ Si algo no funciona, en este orden:
 1. **Privy falla** → Usa RainbowKit con MetaMask como fallback
 2. **Exchange rate API falla** → Hardcodea rates (MXN: 17.2, COP: 4100)
 3. **Demo en vivo falla** → Reproduce la grabación de pantalla de backup
-4. **WiFi falla** → Hotspot del teléfono + grabación de backup
+4. **WiFi falla** → Hotspot del smartphone + grabación de backup

@@ -1,20 +1,79 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @theme {
-  --color-background: #F8F9FA;
-  --color-primary: #1A1A2E;
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
   --color-accent: #00C9A7;
-  --color-text: #2D3748;
-  --color-success: #48BB78;
+  --color-accent-soft: var(--accent-soft);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-success: #00C9A7;
+  --color-danger: #FF5A6B;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-body {
+:root {
+  --background: #F8F9FA;
+  --surface: #FFFFFF;
+  --primary: #1A1A2E;
+  --primary-soft: #2A2A45;
+  --accent-soft: #E6FBF6;
+  --text: #1A1A2E;
+  --muted: #8A8FA3;
+}
+
+html.dark {
+  --background: #0F0F1A;
+  --surface: #1A1A2E;
+  --primary: #FFFFFF;
+  --primary-soft: #E2E2E2;
+  --accent-soft: rgba(0, 201, 167, 0.1);
+  --text: #F8F9FA;
+  --muted: #A0A5B8;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+html, body {
   margin: 0;
   background: var(--color-background);
   color: var(--color-text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  overscroll-behavior-y: none;
 }
 
 #root {
   min-height: 100svh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-background);
+  position: relative;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.04);
 }
+
+/* Hide scrollbars on horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Sheet slide-up */
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-sheet { animation: sheetUp 280ms cubic-bezier(0.32, 0.72, 0, 1); }
+.animate-fade { animation: fadeIn 200ms ease-out; }
+
+/* Numeric tabular */
+.tabular { font-variant-numeric: tabular-nums; }

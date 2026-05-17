@@ -9,7 +9,7 @@ Listo is a mobile-native payments infrastructure built on **Avalanche** that all
 ## 🌟 Key Features
 
 *   **📧 Email-to-Wallet Onboarding:** No seed phrases, no private keys. Users sign in with their email, and an embedded wallet is created automatically via **Privy**.
-*   **⛽ Gasless Transactions (ERC-4337):** Powered by **Smart Wallets**. Users send USDC without ever needing to hold AVAX. We abstract the gas away for a seamless "Web2" experience.
+*   **⛽ Gasless Transactions (ERC-4337):** Powered by **Smart Wallets**.
 *   **🌎 Multi-Currency Reference:** Display balances and transaction previews in local currencies (**MXN, COP, GTQ, PEN, CLP, ARS**) using real-time exchange rates.
 *   **⚡ Instant Settlement:** Cross-border transfers settle on the **Avalanche Fuji Testnet** in less than 3 seconds.
 *   **📱 Banking-Grade UI:** A "crypto-invisible" design focused on institutional trust, sleek animations, and mobile-native interactions.

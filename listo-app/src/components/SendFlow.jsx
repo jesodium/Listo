@@ -1,26 +1,25 @@
-import { useState, useEffect } from 'react';
-import { getExchangeRates, convertCurrency, formatCurrency } from '../utils/currency';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Html5Qrcode } from 'html5-qrcode';
 
-export function SendFlow({ onSend, onCancel, onLookup, currentUsername }) {
-  const [step, setStep] = useState(1);
-  const [targetUsername, setTargetUsername] = useState('');
+export function SendFlow({ onSend, onCancel, onLookup, currentUsername, initialRecipient }) {
+  const [step, setStep] = useState(initialRecipient ? 2 : 1);
+  const [targetUsername, setTargetUsername] = useState(initialRecipient?.username || '');
   const [amount, setAmount] = useState('');
-  const [recipient, setRecipient] = useState(null);
+  const [recipient, setRecipient] = useState(initialRecipient || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const FEE = 1.50;
+  const [showScanner, setShowScanner] = useState(false);
+  const scannerRef = useRef(null);
 
   const handleNext = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!targetUsername) return;
     setError(null);
-
     if (targetUsername.toLowerCase() === currentUsername?.toLowerCase()) {
-      setError("No puedes enviarte dinero a ti mismo.");
+      setError('No puedes enviarte dinero a ti mismo.');
       return;
     }
-    
     setLoading(true);
     try {
       const data = await onLookup(targetUsername);
@@ -33,108 +32,208 @@ export function SendFlow({ onSend, onCancel, onLookup, currentUsername }) {
     }
   };
 
+  useEffect(() => {
+    if (showScanner && !scannerRef.current) {
+      const qr = new Html5Qrcode('qr-reader');
+      scannerRef.current = qr;
+      qr.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        (text) => {
+          qr.stop().then(() => { scannerRef.current = null; });
+          setShowScanner(false);
+          if (text.startsWith('0x') && text.length === 42) {
+            setRecipient({ wallet_address: text, username: 'Dirección escaneada' });
+            setTargetUsername(text);
+            setStep(2);
+          } else {
+            setTargetUsername(text.replace('@', ''));
+          }
+        },
+        () => {}
+      ).catch(() => {
+        setError('Error al iniciar la cámara.');
+        setShowScanner(false);
+      });
+    }
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {}).finally(() => { scannerRef.current = null; });
+      }
+    };
+  }, [showScanner]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (amount && recipient) {
-      onSend({ 
-        targetUsername, 
-        amount: parseFloat(amount), 
-        recipientAddress: recipient.wallet_address 
-      });
+      onSend({ targetUsername, amount: parseFloat(amount), recipientAddress: recipient.wallet_address });
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 animate-in fade-in zoom-in duration-200">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-primary">Enviar dinero</h2>
-        <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 p-1">✕</button>
-      </div>
+    <>
+      {/* backdrop */}
+      <motion.div
+        className="fixed inset-0 z-50 bg-primary/40 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onCancel}
+      />
 
-      {step === 1 && (
-        <form onSubmit={handleNext}>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-            Destinatario
-          </label>
-          <div className="relative mb-6">
-            <span className="absolute left-4 top-3.5 text-gray-400 font-medium">@</span>
-            <input
-              type="text"
-              value={targetUsername}
-              onChange={(e) => setTargetUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase())}
-              placeholder="nombre_de_usuario"
-              className={`w-full pl-8 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 transition-all bg-gray-50 ${error ? 'border-red-500 focus:ring-red-200' : 'border-gray-200 focus:ring-accent'}`}
-              required
-            />
+      {/* sheet */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center">
+        <motion.div
+          className="w-full max-w-[480px] bg-background rounded-t-[32px] p-6 pb-10 shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto"
+          initial={{ y: '100%' }}
+          animate={{ y: 0 }}
+          exit={{ y: '100%' }}
+          transition={{ type: 'spring', damping: 32, stiffness: 320, mass: 0.8 }}
+        >
+
+          {/* grabber */}
+          <div className="w-12 h-1.5 bg-muted/20 rounded-full mx-auto mb-6" />
+
+          {/* header */}
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-[0.15em]">Paso {step} de 2</p>
+              <h2 className="text-2xl font-black text-primary tracking-tight">
+                {step === 1 ? 'Enviar a quién' : '¿Cuánto enviar?'}
+              </h2>
+            </div>
+            <button
+              onClick={onCancel}
+              className="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted active:scale-95 transition"
+            >
+              ✕
+            </button>
           </div>
 
-          {error && (
-            <p className="text-red-500 text-xs font-bold mb-4 px-1 animate-in slide-in-from-top-1 duration-200">
-              ⚠️ {error}
-            </p>
-          )}
+          {/* progress */}
+          <div className="flex gap-1.5 mb-6">
+            <div className="flex-1 h-1 rounded-full bg-accent" />
+            <div className={`flex-1 h-1 rounded-full transition-colors ${step === 2 ? 'bg-accent' : 'bg-muted/10'}`} />
+          </div>
 
-          <button
-            type="submit"
-            disabled={!targetUsername || loading}
-            className="w-full bg-accent text-white py-4 rounded-xl font-bold shadow-lg shadow-accent/20 disabled:opacity-50 transition-all active:scale-[0.98]"
-          >
-            {loading ? 'Buscando...' : 'Continuar'}
-          </button>
-        </form>
-      )}
+          {step === 1 ? (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-xs font-bold text-muted uppercase tracking-wider">Usuario destinatario</label>
+                <button
+                  onClick={() => setShowScanner(!showScanner)}
+                  className={`text-xs font-bold flex items-center gap-1.5 transition ${showScanner ? 'text-danger' : 'text-accent'}`}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/><path d="M14 14h3m4 0h-1m-3 3v3m3-3v3m-3-3h3"/>
+                  </svg>
+                  {showScanner ? 'Cancelar cámara' : 'Escanear QR'}
+                </button>
+              </div>
 
-      {step === 2 && (
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col items-center mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-            <div className="w-16 h-16 rounded-full overflow-hidden mb-2 border-4 border-white shadow-sm">
-              {recipient?.avatar ? (
-                <img src={recipient.avatar} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-accent/10 flex items-center justify-center text-xl">👤</div>
+              {showScanner && (
+                <div className="mb-4 rounded-2xl overflow-hidden bg-black aspect-square relative border-2 border-accent/20">
+                  <div id="qr-reader" className="w-full h-full" />
+                  <div className="absolute inset-0 border-2 border-accent/30 pointer-events-none animate-pulse" />
+                </div>
               )}
-            </div>
-            <p className="font-bold text-primary">@{targetUsername}</p>
-          </div>
 
-          <div className="relative mb-4">
-            <span className="absolute left-4 top-3.5 text-gray-500 font-bold">USDC</span>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              min="0.01"
-              step="0.01"
-              className="w-full pl-16 pr-4 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent text-right text-xl font-bold bg-gray-50"
-              required
-            />
-          </div>
+              <form onSubmit={handleNext}>
+                <div className={`relative mb-4 rounded-2xl bg-surface border-2 transition ${error ? 'border-danger' : 'border-transparent focus-within:border-accent'}`}>
+                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-muted font-bold text-lg">@</span>
+                  <input
+                    type="text"
+                    value={targetUsername}
+                    onChange={(e) => { setError(null); setTargetUsername(e.target.value.replace(/[^a-zA-Z0-9_x]/g, '').toLowerCase()); }}
+                    placeholder="nombre_de_usuario"
+                    autoFocus
+                    className="w-full pl-10 pr-4 py-4 bg-transparent rounded-2xl focus:outline-none font-bold text-primary placeholder:text-muted/30"
+                    required
+                  />
+                </div>
 
-          {amount && (
-            <div className="mb-6">
-              {/* Fee is hidden as per request, but logic remains same for demo */}
+                {error && (
+                  <div className="mb-4 px-4 py-3 rounded-xl bg-danger/10 text-danger text-sm font-semibold">{error}</div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={!targetUsername || loading}
+                  className="w-full bg-primary text-background py-4 rounded-2xl font-bold text-base disabled:opacity-40 active:scale-[0.98] transition shadow-xl shadow-primary/10"
+                >
+                  {loading ? 'Buscando...' : 'Continuar'}
+                </button>
+              </form>
             </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              {/* recipient card */}
+              <div className="flex items-center gap-3 mb-6 bg-surface p-3 rounded-2xl border border-muted/5 shadow-sm">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-background flex-shrink-0">
+                  {recipient?.avatar ? (
+                    <img src={recipient.avatar} className="w-full h-full object-cover" alt="" />
+                  ) : (
+                    <div className="w-full h-full bg-accent-soft flex items-center justify-center text-accent font-black text-lg">
+                      {targetUsername[0]?.toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-wider text-muted font-bold">Enviando a</p>
+                  <p className="font-bold text-primary truncate">
+                    {recipient?.display_name || (targetUsername.startsWith('0x') ? `${targetUsername.slice(0,6)}...${targetUsername.slice(-4)}` : `@${targetUsername}`)}
+                  </p>
+                  {recipient?.display_name && <p className="text-[10px] text-muted font-bold">@{targetUsername}</p>}
+                </div>
+                <button type="button" onClick={() => setStep(1)} className="text-xs text-accent font-bold active:scale-95 px-2">Cambiar</button>
+              </div>
+
+              {/* amount */}
+              <div className="text-center py-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-muted font-bold mb-2">Monto</p>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-4xl font-black text-muted">$</span>
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0"
+                    min="0.01"
+                    step="0.01"
+                    autoFocus
+                    className="w-44 bg-transparent text-center text-6xl font-black text-primary tracking-tighter focus:outline-none placeholder:text-muted/10"
+                    required
+                  />
+                </div>
+                <p className="text-xs font-bold text-muted mt-1 uppercase tracking-wider">USDC</p>
+              </div>
+
+              {/* quick amounts */}
+              <div className="flex gap-2 mb-6 justify-center">
+                {[10, 25, 50, 100].map(v => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setAmount(String(v))}
+                    className="px-4 py-2 rounded-full bg-surface text-primary text-sm font-bold border border-muted/5 shadow-sm active:scale-95 transition hover:bg-accent-soft hover:text-accent"
+                  >
+                    ${v}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="submit"
+                disabled={!amount || parseFloat(amount) <= 0}
+                className="w-full bg-accent text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-accent/30 disabled:opacity-40 active:scale-[0.98] transition"
+              >
+                Confirmar envío
+              </button>
+            </form>
           )}
-
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="flex-1 bg-gray-100 text-gray-500 py-4 rounded-xl font-bold transition-all active:scale-[0.98]"
-            >
-              Atrás
-            </button>
-            <button
-              type="submit"
-              disabled={!amount}
-              className="flex-[2] bg-accent text-white py-4 rounded-xl font-bold shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
-            >
-              Confirmar Envío
-            </button>
-          </div>
-        </form>
-      )}
-    </div>
+        </motion.div>
+      </div>
+    </>
   );
 }

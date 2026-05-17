@@ -16,7 +16,7 @@
 - Una trabajadora mexicana enviando $150 a Guatemala **pierde ~$15 en fees**
 - El dinero tarda **2-5 días** en llegar por canales tradicionales
 
-**El dinero existe. Los teléfonos existen. El problema es la infraestructura.**
+**El dinero existe. Los smartphones existen. El problema es la infraestructura.**
 
 ---
 
@@ -25,7 +25,7 @@
 Una plataforma de pagos cross-border en Avalanche que:
 
 1. **Se siente como un banco** — no como Binance, no como Exodus
-2. **No requiere cuenta bancaria** — solo un número de teléfono
+2. **No requiere cuenta bancaria** — solo un correo electrónico
 3. **Funciona en toda LatAm** — misma UX, distintos países
 4. **Liquida en segundos** — no días
 5. **Cobra centavos** — no dólares
@@ -39,7 +39,7 @@ Ve su saldo: $2,340 MXN
 ↓
 Toca "Enviar"
 ↓
-Escribe: +57 300 123 4567 (Isabella, Colombia)
+Escribe: isabella@ejemplo.com (Isabella, Colombia)
 ↓
 Escribe: $50 USD
 ↓
@@ -53,7 +53,7 @@ Isabella recibe notificación en 3 segundos
 ```
 
 **Western Union:** $7 de fee. 2 días. Solo efectivo.
-**Nuestra plataforma:** $1.50 de fee. 3 segundos. Solo teléfono.
+**Nuestra plataforma:** $1.50 de fee. 3 segundos. Solo correo.
 
 ---
 

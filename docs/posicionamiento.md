@@ -51,7 +51,7 @@
 
 | Su Problema | Nuestra Solución |
 |---|---|
-| No puede servir clientes no bancarizados rentablemente | Onboarding solo con número de teléfono — costo casi cero |
+| No puede servir clientes no bancarizados rentablemente | Onboarding solo con correo electrónico — costo casi cero |
 | Transferencias cross-border requieren relaciones de banca corresponsal | Nuestros rails en Avalanche reemplazan esa infraestructura |
 | No puede competir con Western Union en precio | Con nosotros, pueden cobrar $1.50 vs $7 de WU |
 | Costo de adquisición de clientes es alto | Red P2P viral — María trae a Isabella, Isabella a su roommate |

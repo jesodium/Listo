@@ -92,14 +92,14 @@ $150B    remesas anuales en LatAm
 ```
 
 **Lo que dices:**
-> "El mercado no es el 50% bancarizado que ya tiene opciones. El mercado es el otro 50% que tiene un teléfono pero no tiene banco. 200 millones de personas. Y el canal de distribución para llegar a ellos ya existe — se llama Bankaool."
+> "El mercado no es el 50% bancarizado que ya tiene opciones. El mercado es el otro 50% que tiene un smartphone pero no tiene banco. 200 millones de personas. Y el canal de distribución para llegar a ellos ya existe — se llama Bankaool."
 
 ---
 
 ### Slide 8 — El Ask
 **Texto:**
 ```
-Bankaool + [Nombre de tu app]
+Bankaool + Listo
 Piloto: 3 meses
 Corredor: México → Colombia
 Meta: 10,000 transacciones
@@ -113,8 +113,8 @@ Meta: 10,000 transacciones
 ## Guión del Demo en Vivo
 
 **Preparación:**
-- Teléfono 1 (tú): cuenta de María, saldo pre-cargado
-- Teléfono 2 (tu socio): cuenta de Isabella, en pantalla
+- Smartphone 1 (tú): cuenta de María, saldo pre-cargado
+- Smartphone 2 (tu socio): cuenta de Isabella, en pantalla
 - Laptop: Dashboard de Bankaool abierto, visible para jueces
 
 **El guión exacto:**
@@ -124,13 +124,13 @@ TÚ:
 "María está en México. Tiene $200 dólares en su cuenta.
 Su hija le pide $50."
 
-[Muestras teléfono 1 — saldo de María visible en MXN]
+[Muestras smartphone 1 — saldo de María visible en MXN]
 
 "María abre la app..."
 [Tocas 'Enviar']
 
-"...escribe el número de Isabella..."
-[Escribes el número]
+"...escribe el correo de Isabella..."
+[Escribes el correo]
 
 "...ingresa $50 dólares..."
 [Escribes el monto]
@@ -144,7 +144,7 @@ Su hija le pide $50."
 [Silencio de 3 segundos]
 
 TU SOCIO:
-[Levanta el teléfono 2]
+[Levanta el smartphone 2]
 "Isabella acaba de recibir el dinero. Sin ir al banco, sin Western Union."
 
 TÚ:

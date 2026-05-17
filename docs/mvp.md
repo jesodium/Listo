@@ -8,8 +8,8 @@
 
 ## Lo Que DEBE Funcionar (No Negociable)
 
-### 1. ✅ Creación de Wallet por Número de Teléfono
-- Usuario ingresa número de teléfono + PIN
+### 1. ✅ Creación de Wallet por Correo Electrónico
+- Usuario ingresa su correo electrónico + PIN
 - App crea un wallet de Avalanche en el fondo
 - Usuario NUNCA ve seed phrase ni dirección 0x
 - Solo ve su **saldo: $0.00**
@@ -21,7 +21,7 @@
 ### 2. ✅ Flujo de Envío
 ```
 Toca "Enviar"
-→ Ingresa número de teléfono del destinatario
+→ Ingresa correo electrónico del destinatario
 → Ingresa monto en moneda local (pesos, no USDC)
 → Ve fee: "$1.50"
 → Confirma con PIN
@@ -39,7 +39,7 @@ Toca "Enviar"
 
 ### 4. ✅ Historial de Transacciones
 - Se ve como un estado de cuenta bancario
-- Muestra nombre del remitente (del número de teléfono)
+- Muestra nombre del remitente (de su correo o perfil)
 - Fecha, monto, fee, estado: Completado ✓
 
 ---
@@ -73,7 +73,7 @@ Sé explícito en el pitch — los jueces respetan la honestidad:
 
 **Mitigaciones:**
 - Usa testnet, no mainnet — sin sorpresas de gas
-- Ten el demo pre-cargado en ambos teléfonos antes de subir al escenario
+- Ten el demo pre-cargado en ambos smartphones antes de subir al escenario
 - Ten una grabación de pantalla de backup por si falla el WiFi
 - Practica el flujo exacto del demo, no solo el código
 

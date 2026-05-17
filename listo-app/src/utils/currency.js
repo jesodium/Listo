@@ -26,13 +26,9 @@ export function convertCurrency(amount, rate) {
 }
 
 export function formatCurrency(amount, currency) {
-  const formatted = new Intl.NumberFormat('es-MX', {
+  return new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency,
     currencyDisplay: 'symbol',
   }).format(amount);
-  
-  // For currencies that use $, append the code if it's not USD to avoid confusion
-  // or just always append it for institutional clarity as requested.
-  return `${formatted} ${currency}`;
 }

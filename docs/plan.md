@@ -11,7 +11,7 @@
 | | Tú (Técnico) | Tu Socio (Negocio) |
 |---|---|---|
 | **Foco** | React app + blockchain | Pitch + deck + narrativa |
-| **Entregable** | Demo funcionando en 2 teléfonos | 8 slides + script de demo |
+| **Entregable** | Demo funcionando en 2 smartphones | 8 slides + script de demo |
 | **Criterio de éxito** | Send/receive funciona en vivo | Jueces entienden el negocio en 30 seg |
 
 ---
@@ -79,7 +79,7 @@
 - [x] Selector de moneda preferida en Ajustes
 - [x] Soporte para +8 monedas LatAm (GTQ, PEN, HNL, etc.)
 - [x] Historial de transacciones real (desde backend)
-- [x] App funcionando en dos teléfonos físicos
+- [x] App funcionando en dos smartphones físicos
 - [x] Saldo se actualiza instantáneamente
 
 **Tu socio:**
@@ -87,7 +87,7 @@
 - [ ] Deck completo — 8 slides revisados
 - [ ] Script del demo escrito palabra por palabra
 
-**Check de mediodía:** ¿El demo completo funciona de punta a punta en dos teléfonos? Si no, aquí se prioriza sobre cualquier feature adicional.
+**Check de mediodía:** ¿El demo completo funciona de punta a punta en dos smartphones? Si no, aquí se prioriza sobre cualquier feature adicional.
 
 ---
 
@@ -114,7 +114,7 @@
 - [ ] Cronometrar: debe caber en el tiempo asignado
 - [ ] Verificar que el demo funciona en el WiFi del venue
 - [ ] Tener hotspot como backup
-- [ ] Cargar ambos teléfonos al 100%
+- [ ] Cargar ambos smartphones al 100%
 - [ ] Dormir
 
 ---
@@ -125,8 +125,8 @@ Estas decisiones ya están tomadas. No las reabras durante el hackathon:
 
 | Decisión | Respuesta |
 |---|---|
-| ¿Qué nombre usamos? | Decidir ANTES del hackathon |
-| ¿Mainnet o testnet? | **Testnet siempre (Base Sepolia)** |
+| ¿Qué nombre usamos? | Listo |
+| ¿Mainnet o testnet? | **Testnet siempre (Avalanche Fuji)** |
 | ¿Construimos cash-in? | **No. Lo mencionamos en el pitch** |
 | ¿Construimos KYC? | **No. Bankaool lo maneja** |
 | ¿Agregamos ScoreChain? | **No. Es roadmap** |
@@ -139,7 +139,7 @@ Estas decisiones ya están tomadas. No las reabras durante el hackathon:
 Si cualquiera de estas cosas pasa, para todo y reorienta:
 
 - 🔴 Son las 7pm del Día 1 y la transacción no funciona → Simplifica. Usa mock data.
-- 🔴 Son las 12pm del Día 2 y el demo no funciona en teléfonos → Usa laptops. No teléfonos.
+- 🔴 Son las 12pm del Día 2 y el demo no funciona en smartphones → Usa laptops. No smartphones.
 - 🔴 El deck tiene más de 10 slides → Corta. 8 máximo.
 - 🔴 El pitch dura más de 9 minutos → Corta el Slide 7.
 - 🔴 Estás construyendo algo que no está en el MVP → Para. Vuelve a [mvp.md](mvp.md).
@@ -149,7 +149,7 @@ Si cualquiera de estas cosas pasa, para todo y reorienta:
 ## Lo Que Entrega el Equipo
 
 - [ ] **GitHub repo** — código limpio con README explicando cómo correr el proyecto
-- [ ] **Demo en vivo** — dos teléfonos, funciona, 3 segundos
+- [ ] **Demo en vivo** — dos smartphones, funciona, 3 segundos
 - [ ] **Pitch deck** — 8 slides, en PDF y en presentación
 - [ ] **Video backup** — grabación del demo funcionando
 - [ ] **Descripción del proyecto** — 200 palabras para el formulario de entrega
