@@ -12,11 +12,11 @@
 
 ## app / aplicación
 
-![iPhone 1](readme%20assets/iMockup%20-%20iPhone%2014.png)
-![iPhone 2](readme%20assets/iMockup%20-%20iPhone%2014-2.png)
-![iPhone 3](readme%20assets/iMockup%20-%20iPhone%2014-3.png)
-![iPhone 4](readme%20assets/iMockup%20-%20iPhone%2014-4.png)
-![iPhone 5](readme%20assets/iMockup%20-%20iPhone%2014-5.png)
+<img src="readme%20assets/iMockup%20-%20iPhone%2014.png" width="200"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-2.png" width="200"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-3.png" width="200"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-4.png" width="200"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-5.png" width="200"/>
 
 ---
 
