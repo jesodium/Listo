@@ -12,11 +12,18 @@
 
 ## app / aplicación
 
-<img src="readme%20assets/iMockup%20-%20iPhone%2014.png" width="200"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-2.png" width="200"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-3.png" width="200"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-4.png" width="200"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-5.png" width="200"/>
+<p align="center">
+  <img src="readme%20assets/iMockup%20-%20iPhone%2014.png" width="400"/>
+</p>
+
+---
+
+## gallery
+
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-2.png" width="150"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-3.png" width="150"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-4.png" width="150"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-5.png" width="150"/>
 
 ---
 
