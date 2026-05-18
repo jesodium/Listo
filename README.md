@@ -18,15 +18,6 @@
 
 ---
 
-## gallery
-
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-2.png" width="150"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-3.png" width="150"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-4.png" width="150"/>
-<img src="readme%20assets/iMockup%20-%20iPhone%2014-5.png" width="150"/>
-
----
-
 ## core engine / motor principal
 
 ![avalanche](https://img.shields.io/badge/avalanche-sub--second%20finality-E84142?style=for-the-badge&logo=avalanche&logoColor=white)
@@ -73,6 +64,15 @@
 - `listo-app/`: react frontend & blockchain hooks.
 - `listo-backend/`: express server & user directory.
 - `website/`: static marketing landing page.
+
+---
+
+## gallery
+
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-2.png" width="150"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-3.png" width="150"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-4.png" width="150"/>
+<img src="readme%20assets/iMockup%20-%20iPhone%2014-5.png" width="150"/>
 
 ---
 
