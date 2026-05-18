@@ -10,6 +10,16 @@
 
 ---
 
+## app / aplicación
+
+![iPhone 1](readme%20assets/iMockup%20-%20iPhone%2014.png)
+![iPhone 2](readme%20assets/iMockup%20-%20iPhone%2014-2.png)
+![iPhone 3](readme%20assets/iMockup%20-%20iPhone%2014-3.png)
+![iPhone 4](readme%20assets/iMockup%20-%20iPhone%2014-4.png)
+![iPhone 5](readme%20assets/iMockup%20-%20iPhone%2014-5.png)
+
+---
+
 ## core engine / motor principal
 
 ![avalanche](https://img.shields.io/badge/avalanche-sub--second%20finality-E84142?style=for-the-badge&logo=avalanche&logoColor=white)
